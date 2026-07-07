@@ -1,0 +1,18 @@
+[
+  { "id": "honesty", "label": "Honesty", "description": "Being truthful with yourself and others." },
+  { "id": "growth", "label": "Growth", "description": "Always learning and becoming more." },
+  { "id": "health", "label": "Health", "description": "Caring for your body and mind." },
+  { "id": "connection", "label": "Connection", "description": "Close, honest relationships." },
+  { "id": "freedom", "label": "Freedom", "description": "Living on your own terms, not a habit's." },
+  { "id": "discipline", "label": "Discipline", "description": "Following through on what matters." },
+  { "id": "kindness", "label": "Kindness", "description": "Treating yourself and others with care." },
+  { "id": "courage", "label": "Courage", "description": "Doing the hard, right thing." },
+  { "id": "creativity", "label": "Creativity", "description": "Making and expressing." },
+  { "id": "family", "label": "Family", "description": "Showing up for the people closest to you." },
+  { "id": "purpose", "label": "Purpose", "description": "A direction bigger than yourself." },
+  { "id": "presence", "label": "Presence", "description": "Being fully here, not numbed out." },
+  { "id": "integrity", "label": "Integrity", "description": "Actions that match your values." },
+  { "id": "adventure", "label": "Adventure", "description": "Seeking out real experiences." },
+  { "id": "contribution", "label": "Contribution", "description": "Giving something to others." },
+  { "id": "selfrespect", "label": "Self-respect", "description": "Treating yourself as someone who matters." }
+]

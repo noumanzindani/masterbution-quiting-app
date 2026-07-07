@@ -1,0 +1,302 @@
+# Momentum — Handoff & Continuity (`hand.md`)
+
+**Read this first when resuming.** It is the single source of truth for *where the project is*,
+*how it's built*, and *exactly what to do next*. It exists because the AI-assistant memory that
+enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memory/`) and does **not**
+travel with a `git clone`. This file replaces that.
+
+- **Last updated:** 2026-07-07
+- **Where we are:** Phases 0–3 **complete and simulator-verified**. `flutter analyze` clean, **63 unit tests green**.
+- **What's next:** **Phase 4** — the rule-based coach (centerpiece) + relapse analysis + daily planner + daily reflection.
+
+---
+
+## 0. TL;DR — resume in 3 steps
+
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 63 passing. (If `.g.dart`
+   errors appear, run `dart run build_runner build`.)
+2. Read §7 (feature map) to see what exists, and §8 (Phase 4 plan) for the next build.
+3. Start Phase 4 with the **Coach Engine** (§8). Keep the clinical guardrails in §6 sacred.
+
+Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
+
+---
+
+## 1. The product & its hard constraints
+
+A private app to quit/cut-down compulsive porn/masturbation use — CBT + sex-therapy grounded,
+**non-shaming, harm-reduction, lapse-tolerant**. Every technical choice serves these constraints:
+
+- No backend / no Firebase / no server (zero running cost).
+- No AI / no LLM — "AI-like" features are on-device rule-based logic or descriptive statistics.
+- All data local (Isar for structured/queryable data; SharedPreferences for scalar flags).
+- Monetized only via Google AdMob — **never** in crisis/urge zones, never right after a lapse.
+- Content is bundled JSON assets (text-first; audio deferred).
+- Android + iOS from one Flutter codebase.
+
+---
+
+## 2. How to run / build / test
+
+```bash
+flutter pub get
+dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only needed after
+                                # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
+flutter run                     # runs on a connected device / booted simulator
+flutter analyze                 # must be clean before calling any task done
+flutter test                    # 63 unit tests, must be green
+```
+
+**Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
+launch-time issues (see §9) are invisible to `analyze`/`test` — you MUST also boot the app on a
+real simulator/device for anything touching plugins, native config, or new Isar schema.
+
+---
+
+## 3. Architecture (reused from the author's EzHand apps, backend stripped)
+
+```
+lib/
+  config.dart          Barrel hub. Import this one file to get Flutter + common exports + the
+                       global singletons + context helpers appColor()/isDark()/language()/rtl().
+  packages_list.dart   Re-exports flutter/material, provider, shared_preferences, google_fonts.
+  main.dart            main() → WidgetsFlutterBinding → AppInit.run() → runApp(MultiProvider → MaterialApp)
+  common/
+    session.dart       Holder of ALL SharedPreferences key strings (the prefs-vs-Isar boundary).
+    app_fonts.dart     i18n KEY holder (confusingly named — it's string keys, not fonts).
+    languages/         en.dart map + LanguageProvider (key→string, falls back to key). ar/fr/es = Phase 7.
+    theme/             AppTheme (calm teal palette), ThemeService (light/dark/system), AppCss (GoogleFonts styles).
+  content/             Bundled-content layer (Phase 3):
+    content_service.dart   Loads & caches all JSON; preloaded in AppInit; degrades to empty on error.
+    content_models.dart    ContentArticle/ArticleBlock, Quote, HealthyAlternative.
+    cbt_models.dart, quiz_models.dart, session_models.dart, program_models.dart (Program/ProgramDay/ValueItem)
+  data/                Isar layer:
+    enums.dart         SINGLE SOURCE OF TRUTH for enums. ⚠ On-disk contract — see §5.
+    isar_service.dart  Opens Isar ('momentum' db), registers all 8 collection schemas.
+    time_buckets.dart  DST-safe local-day index (see §9).
+    trigger_labels.dart
+    collections/       8 @collection classes + generated *.g.dart (committed).
+    repositories/      7 thin Isar repos (the ONLY code that touches Isar's native layer).
+  providers/           One ChangeNotifier per feature (Onboarding/Dashboard/Settings/Analytics/Habit/Mood).
+  routes/              route_name.dart (string constants), route_method.dart (name→WidgetBuilder map), index.dart.
+  screens/             splash, onboarding, home (dashboard), emergency/, lock/, settings/, insights/,
+                       habits/, mood/, learn/ (academy/article/motivation/alternatives/sessions/program/values),
+                       cbt/ (hub/worksheet/entry-view/quiz).
+  services/            app_init, ad_service, ad_policy, ad_guard_observer, lock_service, media_service,
+                       + the pure engines (see §4).
+  widgets/             primary_button, option_scale, content_blocks, article_card, ad/banner_ad_widget.
+assets/content/        JSON corpus (see §7.C). Registered in pubspec.yaml under flutter: assets:.
+test/                  Unit tests (63).
+```
+
+**Global singletons (in `config.dart`, assigned once in `AppInit`)**: `prefs`, `session`, `isarService`,
+the 7 repos (`trackerRepo`, `goalRepo`, `assessmentRepo`, `journalRepo`, `habitRepo`, `moodRepo`, `cbtRepo`),
+`adService`, `contentService`, plus `appFonts`, `appCss`, `route`, `rootNavigatorKey`.
+
+**State management:** `provider` + `ChangeNotifier`. Feature providers are created per-screen (scoped) except
+`ThemeService`, `LanguageProvider`, `SettingsProvider` which are app-wide in `main.dart`'s `MultiProvider`.
+
+---
+
+## 4. The engines (pure, device-free, TDD'd) — the "no-AI intelligence"
+
+All under `lib/services/` (except TimeBuckets under `lib/data/`). Each is pure + unit-tested so ~90% of
+the app's real logic runs in milliseconds on CI without a simulator. **Reuse these; don't re-derive per screen.**
+
+| Engine | Does | Tests |
+|---|---|---|
+| `TimeBuckets` | Local-day index (`dateEpochDay`), DST-safe via UTC-midnight diff | `time_buckets_test` |
+| `AssessmentEngine` | PHQ-2/GAD-2/ASRS-style screening → recovery-difficulty composite → suggested goal + plan | `assessment_engine_test` |
+| `StreakService` | Lapse-tolerant streak + **forgiving Recovery Score** (70% windowed resilience + 30% cumulative habit) | `streak_service_test` |
+| `AnalyticsEngine` | Hour/weekday histograms, 7×24 heatmap, top triggers, least-squares trend, **min-sample-gated insights** | `analytics_engine_test` |
+| `HabitStats` | Current habit streak from done-days | `habit_stats_test` |
+| `AlternativesEngine` | "I have N minutes" → time-fit + greedy category-variety suggestions | `alternatives_engine_test` |
+| `QuizEngine` | Quiz scoring, 70% pass bar | `quiz_engine_test` |
+| `ProgramProgress` | Sequential day-unlock for multi-day programs | `program_progress_test` |
+| `AdPolicy` | The ONLY thing that decides whether an ad may show (see §6/§10) | `ad_policy_test` |
+| `LockService` | Salted SHA-256 PIN hash + verify | `lock_service_test` |
+
+**The two forgiving-score constants** (`StreakService._wResilience = 0.7`, `_wHabit = 0.3`) and the
+**assessment composite weights** (`AssessmentEngine._weights`, frequency-heaviest) are the main clinical dials.
+
+---
+
+## 5. Data layer & the on-disk contract
+
+**8 Isar collections** (registered in `isar_service.dart`): `TrackerEvent` (the analytics workhorse — every
+urge/lapse/win/check-in; denormalized indexed `hourOfDay`/`weekday`/`dateEpochDay` for cheap GROUP-BY),
+`RecoveryGoal` (+ embedded `Milestone`), `AssessmentResult`, `JournalEntry`, `HabitDefinition`, `HabitTick`,
+`MoodEntry` (has reserved nullable `voicePath`/`photoPath`), `CbtEntry` (answers as JSON keyed by step id).
+
+⚠️ **`lib/data/enums.dart` is an on-disk contract.** Isar persists `@enumerated` fields **by index**, so
+reordering an existing enum silently corrupts stored data. **Only ever append** new enum values.
+
+⚠️ **Isar accessor pluralization is naive (+s):** `JournalEntry` → `isar.journalEntrys` (not `journalEntries`),
+`CbtEntry` → `isar.cbtEntrys`, `MoodEntry` → `isar.moodEntrys`. Check the generated `.g.dart` when unsure.
+
+**prefs-vs-Isar rule:** chart it / GROUP BY it / keep history → **Isar**. Single current scalar/flag →
+**SharedPreferences** (keys live in `session.dart`: `isOnboarded`, `themeIndex`, app-lock `pinHash`/`pinSalt`,
+`adCooldownUntil`, `dopamineProgress`, `chosenValues`, …).
+
+**Correctness:** store both `timestampUtc` and local `dateEpochDay`; compute streaks/bins in local time via
+`TimeBuckets` (never subtract raw DateTimes — DST breaks it).
+
+---
+
+## 6. Clinical guardrails — NON-NEGOTIABLE, baked into code (not just copy)
+
+1. **Never "reset to zero" on a lapse.** A relapse is appended data (`Outcome.lapse`). The day-counter
+   restarts but the Recovery Score barely moves (StreakService 70/30). No shame mechanics anywhere.
+2. **No ads in crisis/urge zones** — `AdPolicy.noAdRoutes` = {panic, urgeSurf, breathing, grounding,
+   emergencyJournal, emergencyMode, crisisResources, relapseReflection, lock}. Also a **post-lapse cooldown**
+   (`adCooldownUntil`, tripped in `DashboardProvider.logLapse`). Keep new crisis routes in that denylist.
+3. **Crisis resources always reachable** (panic hub + settings). "Not medical care" disclaimer on them.
+4. **Non-diagnostic framing** on all screenings ("a self-reflection screen, not a diagnosis").
+5. **Min-sample gate** on analytics insights (≥5 events) — the app stays honestly silent rather than
+   fabricating a pattern that could read as a verdict.
+6. Non-shaming, harm-reduction microcopy throughout. No unverified medical claims.
+
+---
+
+## 7. Feature map — what's built (Phases 0–3 ✅)
+
+### A. Core loop (Phase 1)
+Onboarding + local-formula screening → rule-based goal (quit/reduce, 7/30/90/180). Dashboard: streak hero,
+Recovery/Consistency cards, quick actions (log urge / I resisted / check-in / I slipped), always-visible
+Panic bar. **Emergency toolkit (NO-AD):** panic hub → paced breathing (4-4-6 animation), 3-min urge-surf
+timer, 5-4-3-2-1 grounding, emergency journal, reach-out. **Crisis resources (NO-AD)** with tel:/sms: launch.
+**App lock:** PIN (pinput, salted hash) + biometric, launch-gate + resume re-lock (15s grace). **AdService**
+guardrail (banner on non-crisis screens, capped interstitial on resume, post-lapse cooldown). Settings.
+
+### B. Make data meaningful (Phase 2)
+Insights screen: 7×24 heatmap + top-triggers bars + `fl_chart` weekly-trend line + gated insight cards.
+Habit tracker (10 presets, tap-complete, 🔥 streak, 7-day strip). Mood journal (1–5 faces + tags + note +
+**voice note** [record→audioplayers playback] + **photo** [image_picker→MediaService copies to app docs;
+only paths in Isar]).
+
+### C. Content depth (Phase 3) — JSON-driven, generic renderers
+Learn hub → **Academy** (articles by category + quizzes), generic **Article reader** (ContentBlocks:
+h/p/list/callout + YouTube link), **CBT toolkit** (4 worksheets → generic form [text/scale/choice] → CbtEntry
+→ history + viewer), **quizzes** (QuizEngine), **Guided sessions** (paced player), **7-day dopamine reset**
+(day-gating via ProgramProgress; progress in prefs), **Values** module (multi-select + reflection → prefs),
+**Motivation** (daily quote + stories).
+
+**Adding content = editing JSON.** Corpus in `assets/content/`: `manifest.json`, `academy/articles.json`,
+`academy/quizzes.json`, `motivation/quotes.json`, `alternatives.json`, `cbt/worksheets.json`,
+`sessions/sessions.json`, `programs/dopamine_reset.json`, `values/values.json`. New files/dirs must be added
+to `pubspec.yaml` `flutter: assets:` AND wired into `ContentService.preload()`. No new Dart for more of an
+existing type.
+
+---
+
+## 8. Phase 4 — the immediate next work (start here)
+
+From the master plan (§11), Phase 4 = "Interactive guidance". Build order:
+
+1. **Rule-based Coach Engine (the centerpiece).** Flows are **JSON decision trees** in
+   `assets/content/coach/flows/*.json`, rendered by **ONE generic `CoachFlowScreen`**. Node types:
+   `message | choice | input | action | end`, with `guard` branching + `effect` side-effects. New flows
+   require **zero new code** — same philosophy as the content renderers already built. A `CoachRunner`
+   walks the tree; `input` nodes can persist to a `JournalEntry`/`CbtEntry`; `action` nodes can navigate or
+   trip effects. Feels conversational, fully offline, $0, never shames. (Real LLM = a paid v2, out of scope.)
+2. **Relapse-reflection flow** — the emotional core of lapse-tolerance. Reached after "I slipped". It
+   **must trip the ad cooldown** (already wired in `logLapse`) and frame the slip as learning, not failure.
+   Route name `relapseReflection` already reserved + in the no-ad denylist.
+3. **Relapse analysis → updated plan** — structured questionnaire → rule-based plan adjustment.
+4. **Daily planner** and **daily reflection** (writes `JournalEntry` with `JournalKind.dailyReflection`).
+
+Suggested new pieces: `lib/content/coach_models.dart` (CoachFlow/CoachNode), `lib/services/coach_runner.dart`
+(pure state machine — **TDD it**: given a flow + choices, assert the node path + collected inputs),
+`lib/screens/coach/coach_flow_screen.dart` (generic renderer), plus flow JSON. Wire a "Coach" entry on the
+dashboard or Learn hub, and hook the relapse flow into the "I slipped" action.
+
+---
+
+## 9. Hard-won gotchas & lessons (don't relearn these)
+
+- **Isar:** use **`isar_community` 3.3.2** (+ `_flutter_libs`, `_generator`), NOT the dormant `isar` package.
+  It resolves + codegens + runs on Dart 3.11.5.
+- **AdMob launch crash:** the `google_mobile_ads` SDK validates the AdMob **App ID** in `Info.plist`
+  (`GADApplicationIdentifier`) / `AndroidManifest.xml` (`APPLICATION_ID`) **at launch**, even before
+  `MobileAds.initialize()`. Missing → hard crash on boot. Both are set to **test** App IDs. (`analyze`/`test`
+  were 100% green when this crashed — only a real boot caught it.)
+- **`record` plugin:** pin **`record: ^6.x`** (6.2.1). `record 5.2.1` pulled an incompatible `record_linux`
+  (a `hasPermission` signature mismatch in the federated `record_platform_interface`) and **failed the Dart
+  compile for iOS** — because Dart compiles *every* endorsed platform implementation. Bumping the umbrella
+  package fixed the transitive set. Lesson: with federated plugins, pin the umbrella to a coherent release.
+- **`local_auth` 3.x:** `authenticate()` takes `biometricOnly:` / `persistAcrossBackgrounding:` **directly**
+  — NOT `options: AuthenticationOptions(...)` (that's the 2.x API).
+- **`pinput`:** `autofocus` only fires on first mount. On the confirm/after-error step you must attach a
+  `FocusNode` and call `requestFocus()` or typed input is silently ignored.
+- **iOS `Info.plist` usage strings required:** `NSFaceIDUsageDescription` (local_auth),
+  `NSMicrophoneUsageDescription` (record), `NSPhotoLibraryUsageDescription` + `NSCameraUsageDescription`
+  (image_picker), `NSUserTrackingUsageDescription` (ATT). Android: `RECORD_AUDIO` in the manifest.
+- **DST-safe day math:** compute `dateEpochDay` as the diff of **UTC midnights** of the local date
+  (`TimeBuckets`), never by subtracting raw local DateTimes.
+- **Driving the iOS simulator from the CLI (for verification):** `cliclick` works, but zsh needs
+  `cliclick ${=tokens}` to word-split; scrolling needs a *fine multi-step* `dd/w/m/du` drag (instant drags
+  don't register as Flutter scrolls); lists settle with inertia so re-screenshot before tapping bottom
+  buttons. `flutter run` in background + poll the log; `xcrun simctl io <id> screenshot`.
+
+---
+
+## 10. Ads — how the guardrail is structured (defense-in-depth)
+
+`AdService` (SDK wrapper) is the ONLY code that talks to `google_mobile_ads`. Every show-decision defers to
+the pure, unit-tested `AdPolicy` (no-ad-route denylist + consent gate + post-lapse cooldown + interstitial
+cadence cap). `BannerAdWidget` renders `SizedBox.shrink()` when the policy disallows. `AdGuardObserver`
+(a `NavigatorObserver`) keeps `adService.currentRoute` in sync so the policy always knows the top screen.
+Interstitial fires only on app-resume, capped + gap-limited, never in a no-ad zone or cooldown.
+
+**Currently test ad units.** Before release (§12): real ad units + real **UMP consent + iOS ATT**
+(the `_consentResolved` flag is set true after init purely because test ads need no consent).
+
+---
+
+## 11. The master plan (phases 0–7)
+
+The original approved plan lived at `~/.claude/plans/tell-me-all-of-dreamy-sun.md` (outside the repo). It maps
+all 35 requested features to where each honestly lives (✅ local / 🔶 on-device stats / 🟡 zero-cost substitute /
+🔒 v2). Phase summary:
+
+- **0 Scaffolding** ✅ — project, theme, routing, Session, Isar, schema-critical collections.
+- **1 Shippable MVP** ✅ — onboarding+screening, core logging, dashboard, emergency toolkit, app lock, ads, crisis.
+- **2 Meaningful data** ✅ — analytics/heatmap/trend, mood journal (voice/photo), habit tracker.
+- **3 Content depth** ✅ — CBT, academy+quizzes, guided sessions, dopamine reset, motivation, alternatives, values.
+- **4 Interactive guidance** ⏭ NEXT — rule-based coach, relapse analysis, daily planner, daily reflection.
+- **5 Gamification + wellbeing** — rewards (badges/coins via **rewarded ads**), mindfulness, self-esteem,
+  relationship, anxiety, depression (with disclaimer), sleep.
+- **6 Proactive** — rule-based adaptive smart notifications (seeded by Phase-2 high-risk buckets), emergency
+  recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing.
+- **7 Privacy/export + social + i18n** — encrypted export/import + PDF/share, sharing controls, discreet
+  icon/name, accountability partner (prefilled SMS/WhatsApp via url_launcher), professional-support notes,
+  full ar/fr/es localization.
+
+**Deferred to a paid v2** (need backend/AI): real AI chatbot, Community, real accountability sync + SOS push,
+cloud backup, live therapist directory, bundled audio.
+
+---
+
+## 12. Pre-release checklist (before any store submission)
+
+- [ ] Swap AdMob **test** App IDs + ad unit IDs → **real** ones (Info.plist, AndroidManifest, `ad_service.dart`).
+- [ ] Implement **Google UMP consent + iOS ATT** (SKAdNetwork IDs; non-personalized ads if declined; no ad
+      before consent resolves). Flip `AdService._consentResolved` to be driven by real consent.
+- [ ] **Data-safety declarations** — even though user data is local, the AdMob SDK collects ad IDs → declare
+      in Play Data Safety + Apple Privacy Label; add Android 13+ `AD_ID` permission.
+- [ ] Rate **17+**, ship zero explicit content, frame as health/recovery, keep store listing/screenshots clean.
+- [ ] Surface crisis resources; keep "screening, not a diagnosis" + "not a substitute for care" disclaimers.
+- [ ] Provide in-app **data wipe** (no account = no deletion endpoint needed).
+- [ ] Run the `store-readiness-audit` / `app-audit` skill.
+- [ ] (Phase 7) Discreet icon/name — iOS `setAlternateIconName`, Android activity-alias.
+
+---
+
+## 13. Conventions to keep
+
+- Match the surrounding code's idiom/comment density. Import `config.dart` in screens/providers for the barrel.
+- New route → add the string to `RouteName`, register the builder in `AppRoute.routes`. If it's a crisis/urge
+  surface, ALSO add it to `AdPolicy.noAdRoutes`.
+- New `@collection` → register its `…Schema` in `isar_service.dart`, add a repo, run `build_runner`, commit `.g.dart`.
+- New pure logic → **TDD it** (red→green) and add it to §4. New content type → JSON + generic renderer.
+- Never hardcode secrets. Conventional Commits (`feat:`/`fix:`/`chore:`). Don't force-push `main`.

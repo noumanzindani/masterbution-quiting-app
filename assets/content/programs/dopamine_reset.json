@@ -1,0 +1,72 @@
+{
+  "id": "dopamine-reset",
+  "title": "7-day dopamine reset",
+  "intro": "A week to let your reward system recalibrate. Each day has a short read and one small action. Go at your own pace — a missed day is fine, just pick it back up.",
+  "days": [
+    {
+      "day": 1,
+      "title": "Understand the reset",
+      "action": "Name your three biggest sources of cheap, instant stimulation (e.g. endless scrolling, sugar, the behaviour itself).",
+      "blocks": [
+        { "type": "p", "text": "A dopamine reset isn't about having zero pleasure. It's about turning down the flood of cheap, instant hits so that ordinary, effortful rewards start to feel good again." },
+        { "type": "p", "text": "When everything is one tap away, the brain's baseline rises and real life feels flat by comparison. Over a week of dialing down the easy hits, that baseline starts to drop back to normal." },
+        { "type": "callout", "text": "The goal this week: fewer cheap hits, more slow rewards. That's the whole reset in one line." }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Turn down the novelty",
+      "action": "Pick one high-novelty feed (social media, news, shorts) and take a full day off it.",
+      "blocks": [
+        { "type": "p", "text": "Endless novelty — new post, new video, new tab — is one of the strongest drivers of the wanting system. It trains your brain to expect a fresh hit every few seconds." },
+        { "type": "p", "text": "Today, remove one source of that novelty for the whole day. Notice the pull to check it. That pull is exactly what you're retraining." }
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Boredom is the point",
+      "action": "Sit with 10 minutes of doing nothing — no phone, no screen. Just be bored.",
+      "blocks": [
+        { "type": "p", "text": "We reach for stimulation the instant boredom appears. But boredom isn't an emergency — it's the empty space where your mind resets and creativity returns." },
+        { "type": "callout", "text": "Let yourself be bored on purpose today. It's uncomfortable for about 90 seconds, and then it isn't." }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Choose a slow reward",
+      "action": "Do one thing that's rewarding but effortful: cook a real meal, read a chapter, finish a small project.",
+      "blocks": [
+        { "type": "p", "text": "Slow rewards — the kind that take effort and time — are where lasting satisfaction lives. They don't spike dopamine; they build it steadily and leave you feeling good, not empty." },
+        { "type": "p", "text": "Pick one today. Notice that the satisfaction lands after the effort, not before. That's the opposite of the loop." }
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Move your body",
+      "action": "Get 20 minutes of movement — a walk, a run, a workout. Anything that raises your heart rate.",
+      "blocks": [
+        { "type": "p", "text": "Exercise is one of the most reliable ways to reset mood and reward chemistry naturally. It also discharges the restless energy that urges ride on." },
+        { "type": "p", "text": "You don't need a perfect workout. Twenty minutes of moving is enough to shift your state for hours." }
+      ]
+    },
+    {
+      "day": 6,
+      "title": "Reach for connection",
+      "action": "Have one real conversation — in person or by call, not text.",
+      "blocks": [
+        { "type": "p", "text": "Connection is a deep, slow reward the loop can never replace. Isolation feeds compulsion; contact starves it." },
+        { "type": "callout", "text": "Reach out to one person today. You don't need a reason beyond wanting to." }
+      ]
+    },
+    {
+      "day": 7,
+      "title": "Reflect and keep what worked",
+      "action": "Write down one thing that felt different this week, and one small rule you'll keep going.",
+      "blocks": [
+        { "type": "p", "text": "A week isn't a finish line — it's a recalibration. Notice what shifted: sleep, mood, the strength of urges, how ordinary things felt." },
+        { "type": "p", "text": "Now choose one small, sustainable rule to carry forward. Not ten. One you'll actually keep." },
+        { "type": "callout", "text": "The reset works because you proved to yourself that the cheap hits weren't giving you much. That knowledge is yours now." }
+      ]
+    }
+  ]
+}

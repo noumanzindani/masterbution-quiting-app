@@ -1,0 +1,127 @@
+[
+  {
+    "id": "why-hard",
+    "title": "Why this is hard — and why that isn't a flaw",
+    "category": "understand",
+    "summary": "The struggle is a sign of how your brain learned, not of weak willpower.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "If quitting were just a matter of deciding, you'd have done it already. The fact that it's hard doesn't mean something is wrong with you — it means a very old part of your brain learned that this behaviour reliably delivers relief." },
+      { "type": "h", "text": "A learned loop, not a moral failing" },
+      { "type": "p", "text": "Compulsive behaviours are habits stamped in by repetition. Each time the loop runs — trigger, behaviour, relief — the pathway gets a little stronger. That's learning working exactly as designed, just pointed at something that no longer serves you." },
+      { "type": "callout", "text": "You are not fighting a lack of willpower. You're re-training a well-practised habit. Different problem, different tools." },
+      { "type": "h", "text": "What this means for you" },
+      { "type": "list", "items": [
+        "Slips are information about the loop, not proof you can't change.",
+        "Small, repeated wins re-wire the pathway more than one heroic effort.",
+        "Self-criticism strengthens the very stress the loop feeds on."
+      ] }
+    ]
+  },
+  {
+    "id": "dopamine-loop",
+    "title": "Your brain on the dopamine loop",
+    "category": "brain",
+    "summary": "Dopamine is about wanting, not liking — which is why urges outlast enjoyment.",
+    "readMinutes": 4,
+    "blocks": [
+      { "type": "p", "text": "Dopamine gets called the 'pleasure chemical', but that's not quite right. It's better understood as the 'wanting' or anticipation chemical. It spikes before the reward — driving you toward it — more than during it." },
+      { "type": "h", "text": "Why the wanting outlasts the liking" },
+      { "type": "p", "text": "With a strong, always-available, endlessly-novel stimulus, the wanting system gets over-trained while the liking often fades. That gap — big urge, small actual satisfaction — is the trap many people describe: chasing something that stopped delivering a while ago." },
+      { "type": "callout", "text": "The urge is real. The promised payoff is mostly a memory the wanting-system keeps quoting." },
+      { "type": "h", "text": "The good news" },
+      { "type": "p", "text": "The same system that learned the loop can un-learn it. Every urge you ride out without acting teaches the wanting-system that the cue no longer predicts the reward. This is called extinction, and it's how the brain turns the volume down over time." }
+    ]
+  },
+  {
+    "id": "urges-are-waves",
+    "title": "Urges are waves, not commands",
+    "category": "urges",
+    "summary": "An urge rises, peaks, and falls on its own — usually within minutes.",
+    "readMinutes": 2,
+    "blocks": [
+      { "type": "p", "text": "It can feel like an urge will keep climbing until you give in. It won't. Urges follow a curve: they rise, crest, and fall — usually within a few minutes if you don't feed them with attention or fight them with panic." },
+      { "type": "h", "text": "Surfing instead of struggling" },
+      { "type": "p", "text": "Urge surfing means noticing the wave and letting it move through you without acting on it. You're not white-knuckling it away; you're observing it, breathing, and letting the crest pass." },
+      { "type": "list", "items": [
+        "Name it: 'This is an urge. It will peak and pass.'",
+        "Locate it in your body and breathe into that spot.",
+        "Delay, don't forbid: 'Not now — I'll check back in 10 minutes.'"
+      ] },
+      { "type": "callout", "text": "Every wave you ride teaches your brain the urge doesn't have to be obeyed. That's the rep that counts." }
+    ]
+  },
+  {
+    "id": "one-slip",
+    "title": "Why one slip snowballs — and how to stop it",
+    "category": "understand",
+    "summary": "The abstinence-violation effect turns a slip into a spiral. You can interrupt it.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "There's a well-studied pattern in recovery called the abstinence-violation effect. A single slip triggers a wave of shame and all-or-nothing thinking — 'I've blown it, so I may as well keep going' — and that thought, not the slip, is what causes the real damage." },
+      { "type": "h", "text": "The slip is a comma, not a full stop" },
+      { "type": "p", "text": "One lapse doesn't erase your progress. The skills you built, the days you showed up, the pathway you weakened — those are still there. A slip is a single data point, best met with curiosity: what led here, and what would help next time?" },
+      { "type": "callout", "text": "That's why this app never resets your progress to zero. Your day-counter restarts, but your recovery score barely moves — because what you built is still yours." },
+      { "type": "h", "text": "If you slip" },
+      { "type": "list", "items": [
+        "Pause the spiral: 'One slip is not a relapse.'",
+        "Get curious, not cruel: what was the trigger?",
+        "Take one small recovery action now, however small."
+      ] }
+    ]
+  },
+  {
+    "id": "rewiring",
+    "title": "Rewiring: what recovery actually changes",
+    "category": "brain",
+    "summary": "Sensitivity, mood, and motivation tend to recover as the loop quiets.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "As you step out of the loop, many people notice a gradual return of things the loop had dulled: steadier mood, more motivation for ordinary rewards, better focus, and renewed interest in real-world connection." },
+      { "type": "p", "text": "This isn't instant, and it isn't linear — there are flat days and even harder days early on (sometimes called a 'flatline'). That's the system recalibrating, not proof it isn't working." },
+      { "type": "callout", "text": "Recovery is less about white-knuckling forever and more about letting your baseline reset so ordinary life feels rewarding again." }
+    ]
+  },
+  {
+    "id": "intimacy",
+    "title": "Rebuilding intimacy and connection",
+    "category": "relationships",
+    "summary": "Recovery is a chance to move toward real closeness, not just away from a habit.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Recovery isn't only about stopping something — it's about making room for something better. Real intimacy is built on presence, honesty, and vulnerability, and those are skills you can practise." },
+      { "type": "h", "text": "Small moves toward connection" },
+      { "type": "list", "items": [
+        "Name a feeling out loud to someone you trust.",
+        "Give full attention to one conversation today — phone away.",
+        "Let yourself be seen: share a real struggle, not just a highlight."
+      ] },
+      { "type": "callout", "text": "If shame has kept you isolated, connection is both the harder path and the more healing one." }
+    ]
+  },
+  {
+    "id": "bigger-life",
+    "title": "Build a life bigger than the habit",
+    "category": "understand",
+    "summary": "You don't just subtract a behaviour — you add a life that competes with it.",
+    "readMinutes": 2,
+    "blocks": [
+      { "type": "p", "text": "Willpower alone leaves a vacuum. The most durable recovery fills the space the habit used to occupy with things that genuinely matter to you: people, purpose, movement, creativity, rest." },
+      { "type": "p", "text": "Ask what the behaviour was really doing for you — soothing stress, killing boredom, numbing loneliness — and build healthier ways to meet that same need. That's what makes the change stick." },
+      { "type": "callout", "text": "The goal isn't a smaller life without the habit. It's a fuller life that leaves less room for it." }
+    ]
+  },
+  {
+    "id": "story-90-days",
+    "title": "A story: 90 days, one slip, and finishing anyway",
+    "category": "story",
+    "summary": "A composite account of what a realistic, non-perfect recovery can look like.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "This is a composite story, drawn from common experiences rather than one person, to show what a realistic path can look like — messy, non-linear, and still successful." },
+      { "type": "p", "text": "The first two weeks were the hardest. Sleep was off, motivation flat, and the urges came in loud at night. Logging them — just naming each one — slowly made them feel smaller. Day 30 felt like a milestone; day 45 felt boring, which turned out to be a good sign." },
+      { "type": "p", "text": "Then, on day 62, a slip. The old voice said 'you've ruined it.' But instead of spiralling, there was a reflection: it was late, alone, doom-scrolling, stressed about work. Not a mystery — a pattern. The day-counter restarted; the progress didn't vanish." },
+      { "type": "callout", "text": "The finish line was never 'perfect'. It was 'kept going after the slip'. That's the version that lasts." }
+    ]
+  }
+]

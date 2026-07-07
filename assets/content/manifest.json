@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updated": "2026-07-07",
+  "packs": {
+    "academy": "academy/articles.json",
+    "quotes": "motivation/quotes.json",
+    "alternatives": "alternatives.json"
+  },
+  "categories": [
+    { "id": "understand", "label": "Understanding recovery" },
+    { "id": "brain", "label": "How the brain works" },
+    { "id": "urges", "label": "Handling urges" },
+    { "id": "relationships", "label": "Relationships & intimacy" },
+    { "id": "story", "label": "Success stories" }
+  ]
+}

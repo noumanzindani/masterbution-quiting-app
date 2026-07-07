@@ -1,0 +1,18 @@
+[
+  { "id": "coldwater", "title": "Splash cold water on your face", "description": "A quick jolt to the nervous system that interrupts the urge and resets your focus.", "category": "calm", "minutes": 2, "icon": "water" },
+  { "id": "boxbreath", "title": "Box breathing", "description": "In for 4, hold 4, out 4, hold 4. Two minutes settles the body's alarm.", "category": "calm", "minutes": 3, "icon": "breathe" },
+  { "id": "pushups", "title": "Do push-ups until you can't", "description": "Burn off the surge of energy. Physical effort discharges the tension an urge rides on.", "category": "move", "minutes": 3, "icon": "fitness" },
+  { "id": "coldshower", "title": "Take a cold shower", "description": "Uncomfortable, effective, and it changes your state fast.", "category": "care", "minutes": 5, "icon": "shower" },
+  { "id": "step-outside", "title": "Step outside for fresh air", "description": "Change your environment. New surroundings break the automatic loop.", "category": "calm", "minutes": 5, "icon": "outside" },
+  { "id": "stretch", "title": "Stretch your whole body", "description": "Release physical tension from head to toe. Slow and deliberate.", "category": "move", "minutes": 5, "icon": "stretch" },
+  { "id": "text-friend", "title": "Text someone you trust", "description": "Connection is the opposite of the isolation the loop feeds on. Even a small hello counts.", "category": "connect", "minutes": 3, "icon": "chat" },
+  { "id": "tea", "title": "Make a hot drink, slowly", "description": "A small ritual of self-care. Do it with full attention.", "category": "care", "minutes": 5, "icon": "tea" },
+  { "id": "walk", "title": "Walk around the block", "description": "Movement plus a change of scene. Notice five things you can see.", "category": "move", "minutes": 10, "icon": "walk" },
+  { "id": "journal", "title": "Write down what you're feeling", "description": "Get the urge out of your head and onto the page. Naming it drains its charge.", "category": "create", "minutes": 10, "icon": "write" },
+  { "id": "call", "title": "Call someone", "description": "Hearing a voice you care about pulls you back into the real world.", "category": "connect", "minutes": 10, "icon": "call" },
+  { "id": "tidy", "title": "Tidy one small space", "description": "A quick win that changes your environment and gives a sense of control.", "category": "care", "minutes": 15, "icon": "clean" },
+  { "id": "bodyscan", "title": "Do a body-scan meditation", "description": "Move attention slowly through the body. It grounds you in the present.", "category": "calm", "minutes": 15, "icon": "spa" },
+  { "id": "music", "title": "Play or listen to music fully", "description": "Let a few songs move you. Engage a different reward pathway.", "category": "create", "minutes": 15, "icon": "music" },
+  { "id": "run", "title": "Go for a run", "description": "Longer effort resets mood and burns off restlessness for hours.", "category": "move", "minutes": 30, "icon": "run" },
+  { "id": "meetup", "title": "See a friend in person", "description": "Real connection is the strongest antidote. Make the plan now.", "category": "connect", "minutes": 60, "icon": "people" }
+]

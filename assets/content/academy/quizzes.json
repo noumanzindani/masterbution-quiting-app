@@ -1,0 +1,52 @@
+[
+  {
+    "id": "quiz-dopamine",
+    "title": "The dopamine loop",
+    "category": "brain",
+    "questions": [
+      {
+        "prompt": "Dopamine is best described as the chemical of…",
+        "options": ["Pleasure and satisfaction", "Wanting and anticipation", "Sleep and rest", "Memory storage"],
+        "correctIndex": 1,
+        "explanation": "Dopamine drives the 'wanting' more than the 'liking' — which is why urges can outlast any real enjoyment."
+      },
+      {
+        "prompt": "When you ride out an urge without acting, over time your brain…",
+        "options": ["Gets permanently more sensitive to the cue", "Learns the cue no longer predicts the reward", "Stops producing dopamine", "Forgets the behaviour instantly"],
+        "correctIndex": 1,
+        "explanation": "This is called extinction: each un-acted-on urge weakens the link between cue and reward."
+      },
+      {
+        "prompt": "A flat, low-motivation stretch early in recovery usually means…",
+        "options": ["The recovery isn't working", "The brain is recalibrating its baseline", "You need the behaviour back", "Something is medically wrong"],
+        "correctIndex": 1,
+        "explanation": "The 'flatline' is the reward system resetting. It tends to pass as ordinary rewards start to feel good again."
+      }
+    ]
+  },
+  {
+    "id": "quiz-urges",
+    "title": "Handling urges",
+    "category": "urges",
+    "questions": [
+      {
+        "prompt": "An urge, left alone, typically…",
+        "options": ["Keeps rising until you give in", "Rises, peaks, and falls within minutes", "Lasts for hours", "Never changes"],
+        "correctIndex": 1,
+        "explanation": "Urges follow a wave. If you don't feed or fight them, they crest and fall — usually within minutes."
+      },
+      {
+        "prompt": "Urge surfing means…",
+        "options": ["Distracting yourself completely", "Forcing the urge away", "Observing the urge without acting on it", "Giving in quickly to get it over with"],
+        "correctIndex": 2,
+        "explanation": "You notice and allow the wave without obeying it — neither suppressing nor acting."
+      },
+      {
+        "prompt": "The most helpful response to a single slip is…",
+        "options": ["Decide you've failed and stop trying", "Get curious about what triggered it", "Punish yourself to stay motivated", "Ignore it entirely"],
+        "correctIndex": 1,
+        "explanation": "Curiosity beats shame. A slip is data about the loop, and self-criticism feeds the very stress that drives it."
+      }
+    ]
+  }
+]

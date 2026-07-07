@@ -1,0 +1,64 @@
+[
+  {
+    "id": "two-minute-breath",
+    "type": "mindfulness",
+    "title": "A two-minute breath",
+    "intro": "A short reset you can do anywhere. Follow along at your own pace.",
+    "minutes": 2,
+    "blocks": [
+      { "text": "Sit comfortably. Let your shoulders drop away from your ears." },
+      { "text": "Breathe in slowly through your nose for a count of four.", "pause": true },
+      { "text": "Let it out gently through your mouth for a count of six.", "pause": true },
+      { "text": "Notice the air moving in and out. There's nowhere else to be right now." },
+      { "text": "If your mind wanders, that's fine. Just guide it gently back to the breath." },
+      { "text": "Take one more slow breath, and let it go.", "pause": true },
+      { "text": "You just gave your nervous system a moment of calm. That's a skill, and you're practising it." }
+    ]
+  },
+  {
+    "id": "making-room",
+    "type": "acceptance",
+    "title": "Making room for the urge",
+    "intro": "An acceptance practice. Instead of fighting the urge, you make space for it — and watch it lose its grip.",
+    "minutes": 5,
+    "blocks": [
+      { "text": "Notice the urge is here. You don't have to like it. You just have to notice it." },
+      { "text": "Where do you feel it in your body? Your chest, your stomach, your hands?" },
+      { "text": "Breathe into that place. Imagine making a little more room around the feeling.", "pause": true },
+      { "text": "You are the sky. The urge is just weather passing through. Storms don't damage the sky." },
+      { "text": "You don't have to push the urge away, and you don't have to act on it. Both take energy. Just let it be here." },
+      { "text": "Watch it the way you'd watch a wave. Rising… cresting… and beginning to fall.", "pause": true },
+      { "text": "Urges always pass. You didn't fight this one — you let it move through. That's the harder, stronger skill." }
+    ]
+  },
+  {
+    "id": "self-compassion",
+    "type": "compassion",
+    "title": "A self-compassion break",
+    "intro": "Three short steps, based on the work of Kristin Neff, for the moments you're being hard on yourself.",
+    "minutes": 3,
+    "blocks": [
+      { "text": "First, acknowledge it: 'This is a moment of struggle.' Naming pain is the start of easing it." },
+      { "text": "Second, remember you're not alone: 'Struggle is part of being human. Many people feel exactly this.'" },
+      { "text": "Third, offer yourself some kindness. Put a hand on your chest if it helps.", "pause": true },
+      { "text": "Say to yourself: 'May I be kind to myself. May I give myself the compassion I need.'", "pause": true },
+      { "text": "Talk to yourself the way you'd talk to a good friend who was struggling. You deserve that same warmth." },
+      { "text": "Self-compassion isn't letting yourself off the hook — it's what actually makes change possible. Shame keeps the loop spinning; kindness quiets it." }
+    ]
+  },
+  {
+    "id": "loving-kindness",
+    "type": "mindfulness",
+    "title": "Loving-kindness",
+    "intro": "A gentle practice of goodwill — toward yourself and others. It softens the isolation that urges feed on.",
+    "minutes": 4,
+    "blocks": [
+      { "text": "Settle in and take a slow breath.", "pause": true },
+      { "text": "Bring yourself to mind. Silently offer: 'May I be well. May I be at ease. May I be kind to myself.'", "pause": true },
+      { "text": "Now bring to mind someone you care about. Offer them the same: 'May you be well. May you be at ease.'", "pause": true },
+      { "text": "Widen it to someone you feel neutral about — a stranger you passed today. 'May you be well too.'" },
+      { "text": "And finally, to everyone also trying to change something hard: 'May we all find our way.'", "pause": true },
+      { "text": "Notice how it feels to wish others well. Connection and warmth are the opposite of the loop." }
+    ]
+  }
+]

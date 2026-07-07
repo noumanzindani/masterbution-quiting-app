@@ -1,0 +1,51 @@
+[
+  {
+    "id": "thought-record",
+    "exercise": "automaticThought",
+    "title": "Catch a thought",
+    "intro": "When an urge or a low mood hits, an automatic thought is usually riding along with it. Slowing down to examine it takes away its automatic power.",
+    "steps": [
+      { "id": "situation", "prompt": "What was happening? Describe the situation.", "type": "text", "hint": "Where were you, what were you doing?" },
+      { "id": "thought", "prompt": "What went through your mind?", "type": "text", "hint": "The exact thought, in your own words." },
+      { "id": "feeling", "prompt": "How strong was the feeling or urge?", "type": "scale", "max": 10 },
+      { "id": "evidence_for", "prompt": "What evidence supports the thought?", "type": "text" },
+      { "id": "evidence_against", "prompt": "What evidence doesn't fit it?", "type": "text" },
+      { "id": "balanced", "prompt": "What's a more balanced way to see this?", "type": "text", "hint": "Not forced positivity — just fairer and truer." }
+    ]
+  },
+  {
+    "id": "spot-distortion",
+    "exercise": "distortion",
+    "title": "Spot the distortion",
+    "intro": "Urges love a distorted thought. Naming the distortion loosens its grip.",
+    "steps": [
+      { "id": "thought", "prompt": "What's the thought?", "type": "text" },
+      { "id": "distortion", "prompt": "Which pattern does it fit best?", "type": "choice", "options": ["All-or-nothing", "Catastrophising", "Should statements", "Emotional reasoning", "Mind-reading", "Discounting the positive"] },
+      { "id": "reframe", "prompt": "Rewrite the thought without the distortion.", "type": "text" }
+    ]
+  },
+  {
+    "id": "abc-trigger",
+    "exercise": "triggerAnalysis",
+    "title": "Trigger analysis (A-B-C)",
+    "intro": "Antecedent, Behaviour, Consequence. Mapping the chain shows you where you can step in next time.",
+    "steps": [
+      { "id": "antecedent", "prompt": "Antecedent — what came before? (time, place, mood, situation)", "type": "text" },
+      { "id": "behaviour", "prompt": "Behaviour or urge — what happened?", "type": "text" },
+      { "id": "consequence", "prompt": "Consequence — how did you feel afterwards?", "type": "text" },
+      { "id": "intervene", "prompt": "Where in that chain could you do something different?", "type": "text", "hint": "The earlier the link, the easier to break." }
+    ]
+  },
+  {
+    "id": "urge-plan",
+    "exercise": "delayedGratification",
+    "title": "Delay & decide",
+    "intro": "You don't have to say no forever — just not right now. Delay creates the space for the urge to pass.",
+    "steps": [
+      { "id": "intensity", "prompt": "How strong is the urge right now?", "type": "scale", "max": 10 },
+      { "id": "delay", "prompt": "How long will you delay before deciding?", "type": "choice", "options": ["10 minutes", "30 minutes", "1 hour", "Until tomorrow"] },
+      { "id": "instead", "prompt": "What will you do during the delay?", "type": "text", "hint": "Pick something that changes your state or place." },
+      { "id": "after", "prompt": "Come back after: how strong is the urge now?", "type": "scale", "max": 10 }
+    ]
+  }
+]
