@@ -4,6 +4,9 @@ import '../screens/cbt/cbt_entry_view_screen.dart';
 import '../screens/cbt/cbt_hub_screen.dart';
 import '../screens/cbt/quiz_screen.dart';
 import '../screens/cbt/worksheet_screen.dart';
+import '../screens/coach/coach_flow_screen.dart';
+import '../screens/coach/coach_hub_screen.dart';
+import '../screens/coach/daily_planner_screen.dart';
 import '../screens/emergency/breathing_screen.dart';
 import '../screens/emergency/crisis_resources_screen.dart';
 import '../screens/emergency/emergency_journal_screen.dart';
@@ -26,6 +29,7 @@ import '../screens/learn/values_screen.dart';
 import '../screens/lock/lock_screen.dart';
 import '../screens/mood/mood_journal_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/rewards/rewards_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import 'route_name.dart';
@@ -46,6 +50,8 @@ class AppRoute {
         _r.grounding: (_) => const GroundingScreen(),
         _r.emergencyJournal: (_) => const EmergencyJournalScreen(),
         _r.crisisResources: (_) => const CrisisResourcesScreen(),
+        // Relapse reflection is a coach flow on a NO-AD route (AdPolicy denylist).
+        _r.relapseReflection: (_) => const CoachFlowScreen(),
         _r.lock: (_) => const LockScreen(),
         _r.settings: (_) => const SettingsScreen(),
         _r.insights: (_) => const InsightsScreen(),
@@ -66,5 +72,10 @@ class AppRoute {
         _r.program: (_) => const ProgramScreen(),
         _r.programDay: (_) => const ProgramDayScreen(),
         _r.values: (_) => const ValuesScreen(),
+        // Coach & check-ins
+        _r.coachHub: (_) => const CoachHubScreen(),
+        _r.coach: (_) => const CoachFlowScreen(),
+        _r.dailyPlanner: (_) => const DailyPlannerScreen(),
+        _r.rewards: (_) => const RewardsScreen(),
       };
 }

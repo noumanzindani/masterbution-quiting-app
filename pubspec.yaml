@@ -87,6 +87,8 @@ flutter:
     - assets/content/sessions/
     - assets/content/programs/
     - assets/content/values/
+    - assets/content/coach/flows/
+    - assets/content/rewards/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

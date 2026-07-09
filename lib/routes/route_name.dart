@@ -42,5 +42,13 @@ class RouteName {
   final String programDay = 'programDay';
   final String values = 'values';
 
+  // Coach & check-ins
+  final String coachHub = 'coachHub';
+  final String coach = 'coach'; // generic CoachFlowScreen (non-crisis flows)
+  final String dailyPlanner = 'dailyPlanner';
+
+  // Rewards / gamification
+  final String rewards = 'rewards';
+
   final String settings = 'settings';
 }

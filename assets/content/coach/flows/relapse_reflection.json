@@ -1,0 +1,103 @@
+{
+  "id": "relapse_reflection",
+  "title": "Learning from a slip",
+  "entry": "intro",
+  "nodes": [
+    {
+      "id": "intro",
+      "type": "message",
+      "text": "A slip is a moment, not a verdict. Nothing you've built is erased — your recovery score barely moved. Let's take two gentle minutes to learn from it, together.",
+      "next": "feeling"
+    },
+    {
+      "id": "feeling",
+      "type": "choice",
+      "text": "First — how are you feeling right now?",
+      "choices": [
+        { "label": "Guilty or ashamed", "next": "reassure", "effect": { "feeling": "Guilty or ashamed" } },
+        { "label": "Frustrated with myself", "next": "reassure", "effect": { "feeling": "Frustrated" } },
+        { "label": "Numb or flat", "next": "reassure", "effect": { "feeling": "Numb" } },
+        { "label": "Actually okay", "next": "trigger", "effect": { "feeling": "Okay" } }
+      ]
+    },
+    {
+      "id": "reassure",
+      "type": "message",
+      "text": "Thank you for being honest. Shame is what keeps the cycle spinning; self-kindness is what breaks it. Try to talk to yourself the way you would to a good friend who slipped.",
+      "next": "trigger"
+    },
+    {
+      "id": "trigger",
+      "type": "choice",
+      "text": "Looking back — what was going on just before?",
+      "choices": [
+        { "label": "I was bored", "next": "need", "effect": { "trigger": "Boredom" } },
+        { "label": "I felt stressed or anxious", "next": "need", "effect": { "trigger": "Stress" } },
+        { "label": "I was lonely", "next": "need", "effect": { "trigger": "Loneliness" } },
+        { "label": "I was tired or drained", "next": "need", "effect": { "trigger": "Tiredness" } },
+        { "label": "I was scrolling / online", "next": "need", "effect": { "trigger": "Scrolling" } },
+        { "label": "Something else", "next": "need", "effect": { "trigger": "Something else" } }
+      ]
+    },
+    {
+      "id": "need",
+      "type": "input",
+      "text": "In a sentence — what were you really hoping it would give you in that moment? (relief, escape, comfort, a break…)",
+      "key": "need",
+      "next": "bridge"
+    },
+    {
+      "id": "bridge",
+      "type": "message",
+      "text": "That need is real and valid. The behaviour was just the fastest route your brain knew to meet it. The work isn't to kill the need — it's to find a kinder road to the same relief.",
+      "next": "plan"
+    },
+    {
+      "id": "plan",
+      "type": "choice",
+      "text": "Next time that same feeling shows up, what's one thing you could try first?",
+      "choices": [
+        { "label": "Breathe for one minute", "next": "save", "effect": { "plan": "Breathe for a minute" } },
+        { "label": "Move — a short walk or push-ups", "next": "save", "effect": { "plan": "Move my body" } },
+        { "label": "Message someone I trust", "next": "save", "effect": { "plan": "Reach out to someone" } },
+        { "label": "Urge-surf and let it pass", "next": "save", "effect": { "plan": "Urge-surf the wave" } }
+      ]
+    },
+    {
+      "id": "save",
+      "type": "action",
+      "text": "Saving what you learned…",
+      "action": "saveReflection:relapse",
+      "next": "offer"
+    },
+    {
+      "id": "offer",
+      "type": "choice",
+      "text": "Would a short calming exercise help right now?",
+      "choices": [
+        { "label": "Yes — paced breathing", "next": "go_breathe" },
+        { "label": "Yes — 5-4-3-2-1 grounding", "next": "go_ground" },
+        { "label": "No, I'm okay", "next": "end" }
+      ]
+    },
+    {
+      "id": "go_breathe",
+      "type": "action",
+      "text": "Opening breathing…",
+      "action": "navigate:breathing",
+      "next": "end"
+    },
+    {
+      "id": "go_ground",
+      "type": "action",
+      "text": "Opening grounding…",
+      "action": "navigate:grounding",
+      "next": "end"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "You showed up and reflected instead of spiralling — that IS the recovery skill. Your streak-since-slip starts fresh today, and everything you've learned still counts."
+    }
+  ]
+}

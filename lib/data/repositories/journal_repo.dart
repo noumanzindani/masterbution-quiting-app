@@ -33,4 +33,15 @@ class JournalRepo {
 
   Future<List<JournalEntry>> recent({int limit = 30}) =>
       _entries.where().sortByTimestampUtcDesc().limit(limit).findAll();
+
+  Future<int> countOfKind(JournalKind kind) =>
+      _entries.filter().kindEqualTo(kind).count();
+
+  Future<List<JournalEntry>> recentOfKind(JournalKind kind, {int limit = 30}) =>
+      _entries
+          .filter()
+          .kindEqualTo(kind)
+          .sortByTimestampUtcDesc()
+          .limit(limit)
+          .findAll();
 }

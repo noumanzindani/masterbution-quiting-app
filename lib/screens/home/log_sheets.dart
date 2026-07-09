@@ -9,7 +9,7 @@ import '../../widgets/primary_button.dart';
 /// triggers/note, then writes a [TrackerEvent] via the dashboard provider.
 Future<void> showLogUrgeSheet(BuildContext context) {
   final provider = context.read<DashboardProvider>();
-  return _showSheet(
+  return _showSheet<void>(
     context,
     ChangeNotifierProvider.value(
       value: provider,
@@ -19,10 +19,12 @@ Future<void> showLogUrgeSheet(BuildContext context) {
 }
 
 /// Opens the compassionate "I slipped" sheet. Frames the lapse as learning,
-/// never failure, then appends it (the score barely moves).
-Future<void> showSlipSheet(BuildContext context) {
+/// never failure, then appends it (the score barely moves). Resolves to `true`
+/// once a lapse is actually saved, so the caller can offer the relapse-
+/// reflection coach flow.
+Future<bool?> showSlipSheet(BuildContext context) {
   final provider = context.read<DashboardProvider>();
-  return _showSheet(
+  return _showSheet<bool>(
     context,
     ChangeNotifierProvider.value(
       value: provider,
@@ -31,8 +33,8 @@ Future<void> showSlipSheet(BuildContext context) {
   );
 }
 
-Future<void> _showSheet(BuildContext context, Widget child) {
-  return showModalBottomSheet(
+Future<T?> _showSheet<T>(BuildContext context, Widget child) {
+  return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -216,7 +218,8 @@ class _SlipSheetState extends State<_SlipSheet> {
               : _noteController.text.trim(),
         );
     if (!mounted) return;
-    Navigator.pop(context);
+    // Signal the caller a lapse was saved so it can offer relapse reflection.
+    Navigator.pop(context, true);
   }
 
   @override

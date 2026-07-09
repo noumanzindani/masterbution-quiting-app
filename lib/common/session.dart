@@ -35,6 +35,14 @@ class Session {
   final String dopamineProgress = 'dopamineProgress'; // JSON list of done days
   final String chosenValues = 'chosenValues'; // JSON list of value ids
   final String valuesReflection = 'valuesReflection';
+  final String dailyPlan = 'dailyPlan'; // JSON {epochDay, items:[{t,d}]} for today
+
+  // --- Rewards / gamification ---
+  final String unlockedAchievements = 'unlockedAchievements'; // JSON list of ids
+  final String rewardCoinsFromAds = 'rewardCoinsFromAds'; // int, earned via ads
+  final String rewardCoinsSpent = 'rewardCoinsSpent'; // int, spent on accents
+  final String unlockedAccents = 'unlockedAccents'; // JSON list of accent ids
+  final String chosenAccent = 'chosenAccent'; // selected accent id
 
   // --- Privacy / misc ---
   final String discreetModeEnabled = 'discreetModeEnabled';

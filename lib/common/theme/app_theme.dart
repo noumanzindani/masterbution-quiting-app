@@ -40,6 +40,25 @@ class AppTheme {
 
   bool get isDark => type == ThemeType.dark;
 
+  /// Returns a copy with an overridden accent pair — used to apply an unlockable
+  /// [AccentPalette] on top of the base light/dark palette (cosmetic only).
+  AppTheme copyWith({Color? primary, Color? primarySoft}) => AppTheme(
+        type: type,
+        primary: primary ?? this.primary,
+        primarySoft: primarySoft ?? this.primarySoft,
+        accent: accent,
+        scaffoldBg: scaffoldBg,
+        cardBg: cardBg,
+        fieldBg: fieldBg,
+        stroke: stroke,
+        darkText: darkText,
+        lightText: lightText,
+        success: success,
+        warning: warning,
+        danger: danger,
+        calm: calm,
+      );
+
   factory AppTheme.fromType(ThemeType type) {
     switch (type) {
       case ThemeType.dark:

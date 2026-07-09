@@ -117,6 +117,22 @@ class _Content extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         _NavRow(
+          icon: Icons.forum_rounded,
+          title: 'Coach & check-ins',
+          subtitle: 'Talk it through, reflect, and plan your day',
+          route: routeName.coachHub,
+          theme: theme,
+        ),
+        const SizedBox(height: 10),
+        _NavRow(
+          icon: Icons.emoji_events_rounded,
+          title: 'Milestones & rewards',
+          subtitle: 'Badges you\'ve earned and themes to unlock',
+          route: routeName.rewards,
+          theme: theme,
+        ),
+        const SizedBox(height: 10),
+        _NavRow(
           icon: Icons.menu_book_rounded,
           title: 'Learn',
           subtitle: 'Lessons, motivation, and things to do instead',
@@ -343,10 +359,23 @@ class _QuickActions extends StatelessWidget {
           icon: Icons.favorite_border_rounded,
           label: language(context, appFonts.iSlipped),
           theme: theme,
-          onTap: () => showSlipSheet(context),
+          onTap: () => _slip(context),
         ),
       ],
     );
+  }
+
+  /// After a slip is logged, gently open the relapse-reflection coach flow (a
+  /// no-ad route). The flow reframes the lapse as learning, never failure.
+  Future<void> _slip(BuildContext context) async {
+    final logged = await showSlipSheet(context);
+    if (logged == true && context.mounted) {
+      await Navigator.pushNamed(
+        context,
+        routeName.relapseReflection,
+        arguments: 'relapse_reflection',
+      );
+    }
   }
 
   Future<void> _quickResist(BuildContext context) async {

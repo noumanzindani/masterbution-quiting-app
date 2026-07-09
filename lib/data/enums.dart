@@ -65,8 +65,8 @@ enum HabitType {
   gratitude,
 }
 
-/// Kinds of free-text journal entries.
-enum JournalKind { dailyReflection, emergencyJournal, gratitude }
+/// Kinds of free-text journal entries. Append-only: Isar persists this by index.
+enum JournalKind { dailyReflection, emergencyJournal, gratitude, relapseReflection }
 
 /// Guided-session modalities.
 enum SessionType {

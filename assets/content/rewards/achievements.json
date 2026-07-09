@@ -1,0 +1,83 @@
+[
+  {
+    "id": "first_step",
+    "title": "First step",
+    "description": "You showed up and logged your first day. This is where it starts.",
+    "icon": "flag",
+    "metric": "positiveDays",
+    "atLeast": 1,
+    "coins": 5
+  },
+  {
+    "id": "three_days",
+    "title": "Three days steady",
+    "description": "Three days since your last slip — the hardest days are behind you.",
+    "icon": "bolt",
+    "metric": "streakDays",
+    "atLeast": 3,
+    "coins": 10
+  },
+  {
+    "id": "one_week",
+    "title": "One week strong",
+    "description": "Seven days steady. A real milestone worth pausing on.",
+    "icon": "calendar",
+    "metric": "streakDays",
+    "atLeast": 7,
+    "coins": 20
+  },
+  {
+    "id": "two_weeks",
+    "title": "Two weeks",
+    "description": "Fourteen days. New patterns are taking root.",
+    "icon": "trending_up",
+    "metric": "streakDays",
+    "atLeast": 14,
+    "coins": 30
+  },
+  {
+    "id": "one_month",
+    "title": "One month",
+    "description": "Thirty days steady. Your brain's reward system is recalibrating.",
+    "icon": "shield",
+    "metric": "streakDays",
+    "atLeast": 30,
+    "coins": 50
+  },
+  {
+    "id": "committed",
+    "title": "Committed",
+    "description": "Ten days of showing up, however they went.",
+    "icon": "favorite",
+    "metric": "positiveDays",
+    "atLeast": 10,
+    "coins": 20
+  },
+  {
+    "id": "reflective",
+    "title": "Reflective",
+    "description": "Wrote five reflections. Self-awareness is a recovery skill.",
+    "icon": "edit",
+    "metric": "reflections",
+    "atLeast": 5,
+    "coins": 15
+  },
+  {
+    "id": "deep_diver",
+    "title": "Deep diver",
+    "description": "Fifteen reflections. You're really listening to yourself now.",
+    "icon": "self_improvement",
+    "metric": "reflections",
+    "atLeast": 15,
+    "coins": 30
+  },
+  {
+    "id": "regular",
+    "title": "Part of your routine",
+    "description": "Used Momentum for two weeks. Consistency beats intensity.",
+    "icon": "spa",
+    "metric": "daysActive",
+    "atLeast": 14,
+    "coins": 15
+  }
+]

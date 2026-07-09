@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -22,6 +23,7 @@ class AdService {
   String? currentRoute;
 
   InterstitialAd? _interstitial;
+  RewardedAd? _rewarded;
 
   // --- Google's official TEST ad units ---
   static String get bannerUnitId => Platform.isAndroid
@@ -30,6 +32,9 @@ class AdService {
   static String get interstitialUnitId => Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/1033173712'
       : 'ca-app-pub-3940256099942544/4411468910';
+  static String get rewardedUnitId => Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : 'ca-app-pub-3940256099942544/1712485313';
 
   Future<void> init() async {
     try {
@@ -39,6 +44,7 @@ class AdService {
       // using a production ad unit. Test ads need no consent, so we resolve it.
       _consentResolved = true;
       _loadInterstitial();
+      _loadRewarded();
     } catch (_) {
       // Ads are strictly optional — the app must run fine without them.
       _sdkReady = false;
@@ -87,6 +93,35 @@ class AdService {
     _recordInterstitialShown();
   }
 
+  /// Is a rewarded ad loaded and allowed to show? (User-initiated only.)
+  bool get rewardedReady => _sdkReady && _consentResolved && _rewarded != null;
+
+  /// Show an OPT-IN rewarded ad (only ever from a user tap on the Rewards
+  /// screen — never a crisis/urge zone). Resolves to `true` only if the user
+  /// watched enough to earn the reward.
+  Future<bool> showRewardedForCoins() async {
+    final ad = _rewarded;
+    if (ad == null || !_sdkReady || !_consentResolved) return false;
+    final done = Completer<bool>();
+    var earned = false;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (a) {
+        a.dispose();
+        _rewarded = null;
+        _loadRewarded();
+        if (!done.isCompleted) done.complete(earned);
+      },
+      onAdFailedToShowFullScreenContent: (a, _) {
+        a.dispose();
+        _rewarded = null;
+        _loadRewarded();
+        if (!done.isCompleted) done.complete(false);
+      },
+    );
+    await ad.show(onUserEarnedReward: (_, _) => earned = true);
+    return done.future;
+  }
+
   /// Begin a no-ad window after a lapse — a person who just logged a slip is
   /// never monetised in that moment.
   void tripPostLapseCooldown({Duration window = const Duration(minutes: 30)}) {
@@ -106,6 +141,18 @@ class AdService {
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) => _interstitial = ad,
         onAdFailedToLoad: (_) => _interstitial = null,
+      ),
+    );
+  }
+
+  void _loadRewarded() {
+    if (!_sdkReady) return;
+    RewardedAd.load(
+      adUnitId: rewardedUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) => _rewarded = ad,
+        onAdFailedToLoad: (_) => _rewarded = null,
       ),
     );
   }

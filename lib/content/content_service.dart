@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'cbt_models.dart';
+import 'coach_models.dart';
 import 'content_models.dart';
 import 'program_models.dart';
 import 'quiz_models.dart';
+import 'reward_models.dart';
 import 'session_models.dart';
 
 /// Loads and caches the bundled JSON content corpus. Preloaded once at startup
@@ -22,8 +24,14 @@ class ContentService {
   List<Quiz> _quizzes = const [];
   List<GuidedSession> _sessions = const [];
   List<ValueItem> _values = const [];
+  List<Achievement> _achievements = const [];
   Program? _dopamineReset;
+  Map<String, CoachFlow> _coachFlows = const {};
   Map<String, String> _categoryLabels = const {};
+
+  /// Filenames (without extension) of the bundled coach flows. Each maps to
+  /// `assets/content/coach/flows/<name>.json` and is keyed by its own `id`.
+  static const _coachFlowFiles = ['relapse_reflection', 'daily_reflection'];
 
   Future<void> preload() async {
     await _loadManifest();
@@ -41,8 +49,21 @@ class ContentService {
         'assets/content/sessions/sessions.json', GuidedSession.fromJson);
     _values = await _loadList(
         'assets/content/values/values.json', ValueItem.fromJson);
+    _achievements = await _loadList(
+        'assets/content/rewards/achievements.json', Achievement.fromJson);
     _dopamineReset = await _loadObject(
         'assets/content/programs/dopamine_reset.json', Program.fromJson);
+    _coachFlows = await _loadCoachFlows();
+  }
+
+  Future<Map<String, CoachFlow>> _loadCoachFlows() async {
+    final flows = <String, CoachFlow>{};
+    for (final name in _coachFlowFiles) {
+      final flow = await _loadObject(
+          'assets/content/coach/flows/$name.json', CoachFlow.fromJson);
+      if (flow != null) flows[flow.id] = flow;
+    }
+    return flows;
   }
 
   // --- Articles / academy ---
@@ -104,7 +125,14 @@ class ContentService {
 
   List<ValueItem> get values => _values;
 
+  List<Achievement> get achievements => _achievements;
+
   Program? get dopamineReset => _dopamineReset;
+
+  // --- Coach flows ---
+
+  /// The rule-based coach flow with the given id, or null if it failed to load.
+  CoachFlow? coachFlow(String id) => _coachFlows[id];
 
   // --- loading ---
 

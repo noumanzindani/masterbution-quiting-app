@@ -172,11 +172,13 @@ const _JournalEntrykindEnumValueMap = {
   'dailyReflection': 0,
   'emergencyJournal': 1,
   'gratitude': 2,
+  'relapseReflection': 3,
 };
 const _JournalEntrykindValueEnumMap = {
   0: JournalKind.dailyReflection,
   1: JournalKind.emergencyJournal,
   2: JournalKind.gratitude,
+  3: JournalKind.relapseReflection,
 };
 
 Id _journalEntryGetId(JournalEntry object) {

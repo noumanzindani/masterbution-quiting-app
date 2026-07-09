@@ -1,0 +1,63 @@
+{
+  "id": "daily_reflection",
+  "title": "Daily reflection",
+  "entry": "intro",
+  "nodes": [
+    {
+      "id": "intro",
+      "type": "message",
+      "text": "A quiet minute to check in with yourself. There are no wrong answers here.",
+      "next": "mood"
+    },
+    {
+      "id": "mood",
+      "type": "choice",
+      "text": "How was today, overall?",
+      "choices": [
+        { "label": "Rough", "next": "kind", "effect": { "mood": "Rough" } },
+        { "label": "Mixed", "next": "win", "effect": { "mood": "Mixed" } },
+        { "label": "Steady", "next": "win", "effect": { "mood": "Steady" } },
+        { "label": "Good", "next": "win", "effect": { "mood": "Good" } }
+      ]
+    },
+    {
+      "id": "kind",
+      "type": "message",
+      "text": "Rough days are part of this, not a sign you're failing. Let's still find one small point of light.",
+      "next": "win"
+    },
+    {
+      "id": "win",
+      "type": "input",
+      "text": "One thing — however small — that went okay today?",
+      "key": "win",
+      "next": "hard"
+    },
+    {
+      "id": "hard",
+      "type": "input",
+      "text": "Anything that felt hard, or tempting?",
+      "key": "hard",
+      "next": "intention"
+    },
+    {
+      "id": "intention",
+      "type": "input",
+      "text": "One small, doable intention for tomorrow?",
+      "key": "intention",
+      "next": "save"
+    },
+    {
+      "id": "save",
+      "type": "action",
+      "text": "Saving your reflection…",
+      "action": "saveReflection:daily",
+      "next": "end"
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "text": "Saved. Small honest check-ins like this are how change quietly compounds. Rest well."
+    }
+  ]
+}

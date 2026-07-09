@@ -86,6 +86,16 @@ class StreakService {
     );
   }
 
+  /// Cumulative distinct days with a positive action for [target]. Monotonic
+  /// (never shrinks on a lapse) — used for lapse-proof achievement metrics.
+  static int positiveDays(List<TrackerEvent> events, BehaviorTarget target) =>
+      events
+          .where((e) => _matches(target, e.target))
+          .where(_isPositive)
+          .map((e) => e.dateEpochDay)
+          .toSet()
+          .length;
+
   /// An event counts toward a target if it is that target, is tagged `both`, or
   /// the query itself is `both`.
   static bool _matches(BehaviorTarget query, BehaviorTarget eventTarget) =>

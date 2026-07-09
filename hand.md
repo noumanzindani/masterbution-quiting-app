@@ -5,18 +5,22 @@
 enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memory/`) and does **not**
 travel with a `git clone`. This file replaces that.
 
-- **Last updated:** 2026-07-07
-- **Where we are:** Phases 0–3 **complete and simulator-verified**. `flutter analyze` clean, **63 unit tests green**.
-- **What's next:** **Phase 4** — the rule-based coach (centerpiece) + relapse analysis + daily planner + daily reflection.
+- **Last updated:** 2026-07-10
+- **Where we are:** Phases 0–4 core complete. **Phase 5 in progress — increment 5.1 (gamification/rewards)
+  built**: achievements, coins, rewarded ads, unlockable accent themes. `flutter analyze` clean, **92 unit
+  tests green**, app boots on sim.
+- **What's next:** the rest of Phase 5 — the wellbeing modules (mindfulness, self-esteem, relationship,
+  anxiety, depression-with-disclaimer, sleep tracking). Mostly JSON content reusing existing renderers. See §11.
 
 ---
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 63 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 92 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
-2. Read §7 (feature map) to see what exists, and §8 (Phase 4 plan) for the next build.
-3. Start Phase 4 with the **Coach Engine** (§8). Keep the clinical guardrails in §6 sacred.
+2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5 status + what remains) for the next build.
+3. Phase 4 + increment 5.1 (rewards) are done; continue Phase 5's wellbeing modules (§8/§11). Keep the
+   clinical guardrails in §6 sacred.
 
 Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
 
@@ -44,7 +48,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 63 unit tests, must be green
+flutter test                    # 92 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -158,7 +162,7 @@ reordering an existing enum silently corrupts stored data. **Only ever append** 
 
 ---
 
-## 7. Feature map — what's built (Phases 0–3 ✅)
+## 7. Feature map — what's built (Phases 0–4 core ✅)
 
 ### A. Core loop (Phase 1)
 Onboarding + local-formula screening → rule-based goal (quit/reduce, 7/30/90/180). Dashboard: streak hero,
@@ -183,32 +187,69 @@ h/p/list/callout + YouTube link), **CBT toolkit** (4 worksheets → generic form
 
 **Adding content = editing JSON.** Corpus in `assets/content/`: `manifest.json`, `academy/articles.json`,
 `academy/quizzes.json`, `motivation/quotes.json`, `alternatives.json`, `cbt/worksheets.json`,
-`sessions/sessions.json`, `programs/dopamine_reset.json`, `values/values.json`. New files/dirs must be added
-to `pubspec.yaml` `flutter: assets:` AND wired into `ContentService.preload()`. No new Dart for more of an
-existing type.
+`sessions/sessions.json`, `programs/dopamine_reset.json`, `values/values.json`, **`coach/flows/*.json`**.
+New files/dirs must be added to `pubspec.yaml` `flutter: assets:` AND wired into `ContentService.preload()`
+(coach flows: add the filename to `ContentService._coachFlowFiles`). No new Dart for more of an existing type.
+
+### D. Interactive guidance (Phase 4 core)
+**Rule-based coach** — flows are JSON decision trees in `assets/content/coach/flows/*.json`; a **pure
+`CoachRunner`** (state machine, 11 unit tests) walks them; **one generic `CoachFlowScreen`** renders any flow
+as a calm chat. Node types `message | choice | input | action | end`; `choice.effect` records variables;
+`action` tokens are interpreted only by the UI (`saveReflection:<kind>` → writes a `JournalEntry`;
+`navigate:<route>` → opens a calming tool). **Adding a coach conversation = a new JSON file, zero code.**
+- **Relapse-reflection flow** (`relapse_reflection.json`) auto-opens after "I slipped", on the
+  `relapseReflection` **no-ad route**. Non-shaming: reframes the slip as learning, captures the trigger + a
+  concrete "next time I'll try" coping intention, saves a `JournalKind.relapseReflection` entry.
+- **Daily reflection** (`daily_reflection.json`) — guided check-in → `JournalKind.dailyReflection`.
+- **Daily planner** — a few intentions for *today*, stored as one JSON blob in prefs (`session.dailyPlan`),
+  auto-resets each day (prefs-vs-Isar rule: single current-day scalar).
+- Entry points: dashboard **"Coach & check-ins"** nav row → `CoachHubScreen` (reflection, planner, recent
+  reflections). Flows validated by `test/coach_flows_test.dart` (no dangling refs, all reachable, terminates).
+
+### E. Gamification / rewards (Phase 5, increment 5.1)
+**Achievements + coins + accent themes.** Pure `RewardEngine` (TDD, 9 tests): given a metrics snapshot +
+achievement defs, computes earned ids and coin totals. `RewardsProvider` gathers metrics (`streakDays`,
+`positiveDays`, `reflections`, `daysActive`) from repos and owns persistence (all prefs — no Isar).
+Achievements authored in `assets/content/rewards/achievements.json` (a badge unlocks when one `metric ≥
+atLeast`), validated by `test/achievements_content_test.dart` (every metric must be one the provider produces).
+- **Guardrails baked in:** badges are **sticky** (provider unions newly-earned into a stored set — a lapse
+  never revokes one); coins are **earned-only** (never deducted for a slip); the **only** coin sink is
+  cosmetic **accent themes** (`AccentPalettes` in `common/theme/accent_palette.dart`) — never therapeutic
+  content. Accent applied via `ThemeService.setAccent` + `themeDataFor` (recolours the `primary` pair app-wide).
+- **Rewarded ads:** `AdService.showRewardedForCoins()` (Google TEST rewarded unit) — opt-in, user-initiated
+  from the Rewards screen only, never a crisis zone. Uses a `Completer` so coins credit only if the reward
+  actually fires. `RewardsScreen` (dashboard **"Milestones & rewards"** row): coin header, achievements list,
+  accent shop.
 
 ---
 
-## 8. Phase 4 — the immediate next work (start here)
+## 8. Phase 4 & 5 — status & what remains
 
-From the master plan (§11), Phase 4 = "Interactive guidance". Build order:
+### Phase 4 (interactive guidance) — core done (see §7.D)
 
-1. **Rule-based Coach Engine (the centerpiece).** Flows are **JSON decision trees** in
-   `assets/content/coach/flows/*.json`, rendered by **ONE generic `CoachFlowScreen`**. Node types:
-   `message | choice | input | action | end`, with `guard` branching + `effect` side-effects. New flows
-   require **zero new code** — same philosophy as the content renderers already built. A `CoachRunner`
-   walks the tree; `input` nodes can persist to a `JournalEntry`/`CbtEntry`; `action` nodes can navigate or
-   trip effects. Feels conversational, fully offline, $0, never shames. (Real LLM = a paid v2, out of scope.)
-2. **Relapse-reflection flow** — the emotional core of lapse-tolerance. Reached after "I slipped". It
-   **must trip the ad cooldown** (already wired in `logLapse`) and frame the slip as learning, not failure.
-   Route name `relapseReflection` already reserved + in the no-ad denylist.
-3. **Relapse analysis → updated plan** — structured questionnaire → rule-based plan adjustment.
-4. **Daily planner** and **daily reflection** (writes `JournalEntry` with `JournalKind.dailyReflection`).
+Built & tested: the rule-based `CoachRunner`, the generic `CoachFlowScreen`, the relapse-reflection flow,
+daily reflection, the daily planner, and the `CoachHubScreen`. To add a flow: drop
+`assets/content/coach/flows/<name>.json`, add `<name>` to `ContentService._coachFlowFiles`, open it via
+`Navigator.pushNamed(context, routeName.coach, arguments: '<flow-id>')` (new route + denylist entry if it's a
+crisis flow). `action` tokens recognised: `saveReflection:relapse`, `saveReflection:daily`, `navigate:<route>`.
+*Optional polish:* an explicit relapse-analysis→plan-adjustment step (today the coping plan is captured as a
+journal entry); more coach flows.
 
-Suggested new pieces: `lib/content/coach_models.dart` (CoachFlow/CoachNode), `lib/services/coach_runner.dart`
-(pure state machine — **TDD it**: given a flow + choices, assert the node path + collected inputs),
-`lib/screens/coach/coach_flow_screen.dart` (generic renderer), plus flow JSON. Wire a "Coach" entry on the
-dashboard or Learn hub, and hook the relapse flow into the "I slipped" action.
+### Phase 5 (gamification + wellbeing) — increment 5.1 done, wellbeing modules remain
+
+**5.1 gamification/rewards — DONE (see §7.E):** `RewardEngine` (TDD), achievements JSON, coins, rewarded ads,
+unlockable accent themes, `RewardsScreen`. 92 tests green; app boots on sim (dashboard screenshot-verified).
+*GUI click-through still blocked this session by macOS Automation permissions — logic covered instead by the
+engine + content-validation tests.*
+
+**Remaining Phase 5 — the wellbeing modules (next increments):** mindfulness (body scan, breathing,
+loving-kindness), self-esteem (strengths, affirmations, self-compassion), relationship (intimacy,
+communication, consent), anxiety (breathing/grounding/PMR), **depression support (behavioural activation +
+activity scheduling — MUST carry the prominent "not a substitute for professional care" disclaimer)**, and
+**sleep tracking + rule-based tips** (this one needs a new `SleepEntry` Isar collection → run `build_runner`).
+Most of the rest is **JSON content reusing the existing `GuidedSession` player / `ContentBlocks` article
+renderer + a new "Wellbeing" hub** — little new Dart. Author the JSON, register it in `pubspec.yaml` +
+`ContentService.preload()`, add hub tiles.
 
 ---
 
@@ -263,9 +304,10 @@ all 35 requested features to where each honestly lives (✅ local / 🔶 on-devi
 - **1 Shippable MVP** ✅ — onboarding+screening, core logging, dashboard, emergency toolkit, app lock, ads, crisis.
 - **2 Meaningful data** ✅ — analytics/heatmap/trend, mood journal (voice/photo), habit tracker.
 - **3 Content depth** ✅ — CBT, academy+quizzes, guided sessions, dopamine reset, motivation, alternatives, values.
-- **4 Interactive guidance** ⏭ NEXT — rule-based coach, relapse analysis, daily planner, daily reflection.
-- **5 Gamification + wellbeing** — rewards (badges/coins via **rewarded ads**), mindfulness, self-esteem,
-  relationship, anxiety, depression (with disclaimer), sleep.
+- **4 Interactive guidance** ✅ core — rule-based coach engine, relapse-reflection flow, daily reflection,
+  daily planner. (Optional polish remains: explicit plan-adjustment step, more flows — see §8.)
+- **5 Gamification + wellbeing** 🔨 IN PROGRESS — ✅ rewards (badges/coins via **rewarded ads**, accent themes);
+  ⏭ still to do: mindfulness, self-esteem, relationship, anxiety, depression (with disclaimer), sleep.
 - **6 Proactive** — rule-based adaptive smart notifications (seeded by Phase-2 high-risk buckets), emergency
   recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing.
 - **7 Privacy/export + social + i18n** — encrypted export/import + PDF/share, sharing controls, discreet
