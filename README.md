@@ -13,10 +13,15 @@ Built under hard constraints, by design:
 - **Content bundled** as JSON assets (text-first).
 - Ships to **Android + iOS** from one Flutter codebase.
 
-> **Status:** Phases 0–6 complete — gamification, six wellbeing modules, sleep tracking, and now
-> **proactive intelligence**: guided emergency recovery mode, a rule-based risk-pattern engine, and
-> smart (opt-in, quiet-hours-aware) local reminders (133 unit tests, `flutter analyze` clean).
-> **Next:** Phase 7 (encrypted export/backup, accountability partner, i18n ar/fr/es).
+> **Status: Phases 0–7 complete — the planned build is done.** On top of the core loop, analytics,
+> content, coach, gamification, wellbeing, sleep tracking and proactive intelligence, Phase 7 adds
+> **AES-256-GCM encrypted backup/restore**, **progress-share + accountability partner** (prefilled
+> SMS/WhatsApp) + **therapy notes**, **full ar/fr/es localization** (UI + RTL + locale-aware content),
+> and a **discreet app icon/name** switch. 161 unit tests, `flutter analyze` clean; iOS sim + Android
+> debug APK both build.
+> **Next:** release hardening only — real AdMob IDs + consent (UMP/ATT), data-safety declarations, a
+> store audit, and on-device QA of the two device-only behaviours (notification delivery; the live
+> discreet-icon swap). No further feature phases are planned (see `hand.md` §12).
 >
 > **👉 If you're resuming this project, read [`hand.md`](hand.md) first** — it's the full handoff
 > (architecture, engines, content system, gotchas, what's built, and exactly where to pick up).
@@ -34,7 +39,7 @@ flutter run                # Android or iOS device/simulator
 
 ```bash
 flutter analyze            # must be clean
-flutter test               # 133 unit tests, must be green
+flutter test               # 161 unit tests, must be green
 ```
 
 ## Tech stack

@@ -6,24 +6,30 @@ enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memo
 travel with a `git clone`. This file replaces that.
 
 - **Last updated:** 2026-07-10
-- **Where we are:** **Phases 0–6 COMPLETE**. Phase 6 (proactive intelligence): guided **emergency recovery
-  mode** (urge ≥ 9/10 forced sequence), a rule-based **risk-pattern engine**, and **smart local reminders**
-  (opt-in, quiet-hours-aware, timed off your own patterns). `flutter analyze` clean, **133 unit tests green**,
-  app boots on sim.
-- **What's next:** **Phase 7** — encrypted export/import + PDF/share, sharing controls, discreet icon/name,
-  accountability partner (prefilled SMS/WhatsApp), professional-support notes, full ar/fr/es i18n. See §11.
-- **⚠️ Phase 6 not verified this session:** actual notification *delivery* (needs a physical device + granted
-  permission) and the *Android build* (only the iOS sim was available; core-library desugaring was added — the
-  canonical fix — but not build-tested). Everything else is unit-tested + boots on the sim.
+- **Where we are:** **Phases 0–7 COMPLETE — the planned build is done.** Phase 7 shipped in increments:
+  7.1 encrypted backup export/import (AES-256-GCM), 7.2–7.4 progress sharing + accountability partner
+  (prefilled SMS/WhatsApp) + professional-support/therapy notes, 7.5 full **ar/fr/es** localization (UI + RTL
+  + locale-aware bundled content), 7.6 **discreet app icon/name** (iOS alternate icon + Android activity-alias).
+  `flutter analyze` clean, **161 unit tests green**, both the **iOS sim build and the Android debug APK build**.
+- **What's next:** no new planned phases — remaining work is **release hardening** (§12 checklist): real AdMob
+  IDs + UMP/ATT consent wiring, data-safety declarations, store audit, and **on-device QA** of the two
+  device-only behaviours (notification delivery; the live discreet icon/name swap). Deferred-to-v2 items
+  (real AI chat, cloud sync, community, live therapist directory, bundled audio) remain out of scope.
+- **⚠️ Two behaviours are device-only (never observable on the sim):** (1) notification *delivery* at the
+  scheduled local time; (2) the discreet icon/name *swap* — alternate icons don't render in the iOS Simulator.
+  Both are unit-tested and the native wiring is **build-verified** (iOS Info.plist gets `CFBundleAlternateIcons
+  → AppIcon-Disguise`; the APK packages `DisguiseAlias` + all disguise mipmaps), but the visible effect needs
+  a physical device. The placeholder disguise icons (neutral slate) must be replaced with final art pre-release.
 
 ---
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 133 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 161 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
-2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5/6 status) for context.
-3. Phases 0–6 are complete. Start **Phase 7** (§11). Keep the clinical guardrails in §6 sacred.
+2. Read §7 (feature map) to see what exists, and §8 (Phase 4–7 status) for context.
+3. Phases 0–7 are complete. There is no next phase — work from the **release-hardening checklist (§12)** and
+   the two device-only QA items. Keep the clinical guardrails in §6 sacred.
 
 Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
 
@@ -51,7 +57,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 133 unit tests, must be green
+flutter test                    # 161 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -71,7 +77,9 @@ lib/
   common/
     session.dart       Holder of ALL SharedPreferences key strings (the prefs-vs-Isar boundary).
     app_fonts.dart     i18n KEY holder (confusingly named — it's string keys, not fonts).
-    languages/         en.dart map + LanguageProvider (key→string, falls back to key). ar/fr/es = Phase 7.
+    languages/         en/ar/fr/es maps + LanguageProvider (key→string, falls back to English; `isRtl` for
+                       Arabic drives Directionality in MaterialApp.builder). Content is localized in parallel
+                       under assets/content/i18n/<locale>/ with per-file English fallback (see ContentService).
     theme/             AppTheme (calm teal palette), ThemeService (light/dark/system), AppCss (GoogleFonts styles).
   content/             Bundled-content layer (Phase 3):
     content_service.dart   Loads & caches all JSON; preloaded in AppInit; degrades to empty on error.
@@ -285,7 +293,7 @@ Three pieces, all with the pure logic TDD'd and the side effects kept thin:
 
 ---
 
-## 8. Phase 4 & 5 — status & what remains
+## 8. Phase 4–7 — status & what remains
 
 ### Phase 4 (interactive guidance) — core done (see §7.D)
 
@@ -317,6 +325,37 @@ route field (JSON-only) → "Track your sleep" CTA atop the sleep module.
 **111 tests green; app boots on sim (Isar opened with the new schema, dashboard verified).** *GUI click-through
 still blocked this session by macOS Automation permissions — the tips engine + `durationMinutes` wrap + content
 wiring are covered by unit tests; the screen reuses the verified provider+ListView+card render patterns.*
+
+### Phase 6 (proactive intelligence) — COMPLETE (see §7.H)
+
+Guided **emergency recovery mode** (urge ≥ 9/10 forced stepper reusing the tested escalation rule), a pure
+**`RiskEngine`** (peak-risk hour / toughest weekday over existing TrackerEvents, min-sample gated), and a pure
+**`SmartScheduler`** → `NotificationService` pipeline (opt-in, quiet-hours-aware, rescheduled each launch). No
+new Isar collections. Android manifest gained `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED` + the plugin's
+two receivers; `build.gradle.kts` gained core-library desugaring. Device-only gap: actual notification delivery.
+
+### Phase 7 (privacy/export + social + i18n + discreet) — COMPLETE
+
+- **7.1 encrypted backup** — `ExportCrypto` (AES-256-GCM, 20k-iter SHA-256 KDF, unified wrong-passphrase error)
+  + `ExportCodec` (versioned, app-tagged bundle) + `ExportService` (gathers every Isar collection + a prefs
+  allow-list that **never** includes the PIN hash/salt) → `BackupScreen` (passphrase, private-notes toggle,
+  share-sheet export, paste-to-restore). All pure crypto/codec logic is TDD'd.
+- **7.2–7.4 social** — pure `ProgressReport` + `AccountabilityMessages` (wa.me / sms: URIs) → progress-share +
+  accountability-partner screens (contact in prefs, prefilled SMS/WhatsApp via url_launcher/share_plus); 10th
+  Isar collection `SessionNote` + repo → professional/therapy notes screen (title/note/homework/done).
+- **7.5 i18n** — ar/fr/es UI maps (English fallback), RTL for Arabic via `MaterialApp.builder`, locale-aware
+  `ContentService` (`assets/content/i18n/<locale>/…` with per-file English fallback), settings language picker.
+  *Scoping note:* the **clinical content corpus is deliberately left to fall back to English** pending human
+  translation — machine-translating sensitive therapy copy would violate the accuracy guardrail. Only the
+  non-clinical motivation quotes were translated as a demonstration; the localization *infrastructure* is
+  complete, so translated JSON dropped into the locale dirs is picked up with zero code changes.
+- **7.6 discreet icon/name** — `DisguiseService` (MethodChannel, TDD'd contract, degrades to no-op) driven by
+  the Settings toggle + re-applied on launch. iOS: `AppIcon-Disguise` alternate set + `INCLUDE_ALL_APPICON_ASSETS`
+  build flag + `setAlternateIconName` in AppDelegate (icon only — iOS can't rename at runtime). Android:
+  `DisguiseAlias` toggled against MainActivity via `PackageManager` (name **and** icon). **Both builds pass**;
+  placeholder slate icons need replacing with final art. Device-only gap: the visible swap.
+
+**161 tests green; `flutter analyze` clean; iOS sim build + Android debug APK build both succeed.**
 
 ---
 
@@ -399,14 +438,16 @@ cloud backup, live therapist directory, bundled audio.
 - [ ] Surface crisis resources; keep "screening, not a diagnosis" + "not a substitute for care" disclaimers.
 - [ ] Provide in-app **data wipe** (no account = no deletion endpoint needed).
 - [ ] Run the `store-readiness-audit` / `app-audit` skill.
-- [ ] **Verify the Android build** (`flutter build apk`) — Phase 6 added `flutter_local_notifications` v22, which
-      needs core-library desugaring (already in `build.gradle.kts`) + the manifest receivers. Only the iOS sim
-      was exercised when this was added.
+- [x] **Android build verified** (`flutter build apk --debug`, Phase 7.6) — the desugaring + notification
+      receivers + the new `DisguiseAlias`/mipmaps all compile and package. Re-run in CI before release.
 - [ ] **QA notification delivery on a physical device** — grant the runtime permission, confirm the daily
       check-in / risk heads-up / tough-day reminders actually fire at the right local time (the schedule logic
       is unit-tested, but on-device delivery wasn't exercised). Consider adding `flutter_timezone` if exact
       DST/zone handling matters more than the current launch-reschedule approximation.
-- [ ] (Phase 7) Discreet icon/name — iOS `setAlternateIconName`, Android activity-alias.
+- [ ] **QA the discreet icon/name swap on a physical device** — toggle Settings → Discreet mode; confirm the
+      home-screen icon (both platforms) and launcher name (Android) actually change. The native wiring is
+      build-verified but the swap can't render on the iOS Simulator. **Replace the placeholder slate icons with
+      final neutral art** (iOS `AppIcon-Disguise.appiconset`, Android `mipmap-*/ic_launcher_disguise.png`).
 
 ---
 
