@@ -44,7 +44,7 @@ class _TabShellScaffoldState extends State<TabShellScaffold> {
             ),
       body: Column(
         children: [
-          if (banner != null) banner,
+          ?banner,
           Expanded(
             child: IndexedStack(index: _index, children: widget.tabs),
           ),
