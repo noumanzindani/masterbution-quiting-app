@@ -37,7 +37,27 @@ class ContentService {
   /// `assets/content/coach/flows/<name>.json` and is keyed by its own `id`.
   static const _coachFlowFiles = ['relapse_reflection', 'daily_reflection'];
 
-  Future<void> preload() async {
+  /// Active content locale. Content files are looked up under
+  /// `assets/content/i18n/<locale>/…` first, falling back to the English base
+  /// path when a translated file isn't bundled — so localizing content is a
+  /// drop-in (no code change), and any untranslated file degrades to English.
+  String _locale = 'en';
+
+  /// Re-preload the corpus for a new locale (called from the language picker).
+  Future<void> reloadForLocale(String locale) async {
+    _locale = locale;
+    await preload();
+  }
+
+  /// Rewrite an `assets/content/<rest>` path to its locale-specific variant.
+  String _localized(String path) {
+    if (_locale == 'en' || !path.startsWith('assets/content/')) return path;
+    final rest = path.substring('assets/content/'.length);
+    return 'assets/content/i18n/$_locale/$rest';
+  }
+
+  Future<void> preload({String? locale}) async {
+    if (locale != null) _locale = locale;
     await _loadManifest();
     _articles = await _loadList(
         'assets/content/academy/articles.json', ContentArticle.fromJson);
@@ -185,12 +205,26 @@ class ContentService {
     }
   }
 
+  /// Load [path] as a string, preferring the localized variant and falling back
+  /// to the English base path.
+  Future<String> _loadRaw(String path) async {
+    final localized = _localized(path);
+    if (localized != path) {
+      try {
+        return await rootBundle.loadString(localized);
+      } catch (_) {
+        // Not translated for this locale — fall through to the base path.
+      }
+    }
+    return rootBundle.loadString(path);
+  }
+
   Future<List<T>> _loadList<T>(
     String path,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
-      final raw = await rootBundle.loadString(path);
+      final raw = await _loadRaw(path);
       final data = jsonDecode(raw) as List;
       return data
           .map((e) => fromJson(e as Map<String, dynamic>))
@@ -205,7 +239,7 @@ class ContentService {
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
-      final raw = await rootBundle.loadString(path);
+      final raw = await _loadRaw(path);
       return fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {
       return null;

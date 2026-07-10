@@ -98,6 +98,22 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          _SectionLabel('Language', theme: theme),
+          _SettingCard(
+            theme: theme,
+            children: [
+              _LanguagePicker(
+                current: context.watch<LanguageProvider>().localeCode,
+                onChanged: (code) {
+                  context.read<LanguageProvider>().setLocale(code);
+                  // Re-localize bundled content (falls back to English per file).
+                  contentService.reloadForLocale(code);
+                },
+                theme: theme,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           _SectionLabel('Data', theme: theme),
           _SettingCard(
             theme: theme,
@@ -290,6 +306,42 @@ class _SwitchRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LanguagePicker extends StatelessWidget {
+  const _LanguagePicker({
+    required this.current,
+    required this.onChanged,
+    required this.theme,
+  });
+  final String current;
+  final ValueChanged<String> onChanged;
+  final AppTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final l in LanguageProvider.available)
+          InkWell(
+            onTap: () => onChanged(l.code),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(l.label,
+                        style: appCss.titleSemi16.textColor(theme.darkText)),
+                  ),
+                  if (l.code == current)
+                    Icon(Icons.check_rounded, color: theme.primary),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

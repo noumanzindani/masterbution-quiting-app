@@ -43,8 +43,9 @@ class AppInit {
     await notificationService.init();
     await NotificationScheduling.refresh();
 
-    // Load the bundled content corpus (small; degrades to empty on failure).
-    await contentService.preload();
+    // Load the bundled content corpus in the user's locale (small; degrades to
+    // empty on failure, and to English per-file when a translation is missing).
+    await contentService.preload(locale: prefs.getString(session.locale) ?? 'en');
 
     // Record first-launch date once (used for lifetime stats, no PII).
     if (prefs.getString(session.firstLaunchDate) == null) {

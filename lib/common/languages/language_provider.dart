@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../session.dart';
+import 'ar.dart';
 import 'en.dart';
+import 'es.dart';
+import 'fr.dart';
 
 /// Holds the active language map and persists the chosen locale.
 ///
@@ -17,7 +20,20 @@ class LanguageProvider extends ChangeNotifier {
   final SharedPreferences _prefs;
   final Session _session = Session();
 
-  static const Map<String, Map<String, String>> _maps = {'en': en};
+  static const Map<String, Map<String, String>> _maps = {
+    'en': en,
+    'ar': ar,
+    'fr': fr,
+    'es': es,
+  };
+
+  /// Display names for the language picker, in menu order.
+  static const List<({String code, String label})> available = [
+    (code: 'en', label: 'English'),
+    (code: 'ar', label: 'العربية'),
+    (code: 'fr', label: 'Français'),
+    (code: 'es', label: 'Español'),
+  ];
 
   late String _localeCode;
   String get localeCode => _localeCode;

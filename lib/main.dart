@@ -89,8 +89,8 @@ class _AppViewState extends State<_AppView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final themeService = context.watch<ThemeService>();
-    // Rebuild on locale change too (RTL wiring arrives with ar in Phase 7).
-    context.watch<LanguageProvider>();
+    // Rebuild on locale change and drive whole-app text direction (Arabic → RTL).
+    final lang = context.watch<LanguageProvider>();
 
     return MaterialApp(
       title: 'Momentum',
@@ -102,6 +102,10 @@ class _AppViewState extends State<_AppView> with WidgetsBindingObserver {
       initialRoute: routeName.splash,
       routes: appRoute.routes,
       navigatorObservers: [_adGuard],
+      builder: (context, child) => Directionality(
+        textDirection: lang.isRtl ? TextDirection.rtl : TextDirection.ltr,
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

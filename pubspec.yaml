@@ -93,6 +93,11 @@ flutter:
     - assets/content/coach/flows/
     - assets/content/rewards/
     - assets/content/wellbeing/
+    # Localized content (Phase 7). Untranslated files fall back to the English
+    # base path at load time (see ContentService._loadRaw).
+    - assets/content/i18n/ar/motivation/
+    - assets/content/i18n/fr/motivation/
+    - assets/content/i18n/es/motivation/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
