@@ -7,8 +7,30 @@ import '../lock/lock_screen.dart';
 
 /// Privacy, security and appearance settings. A non-crisis screen, so a banner
 /// is allowed here (still policy-gated).
+///
+/// Thin wrapper around [SettingsBody] so the route still works if pushed
+/// directly; [MainShellScreen] embeds [SettingsBody] as the You tab.
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = appColor(context);
+    return Scaffold(
+      backgroundColor: theme.scaffoldBg,
+      appBar: AppBar(
+        title: Text(language(context, appFonts.settings),
+            style: appCss.headingBold22.textColor(theme.darkText)),
+      ),
+      body: const SettingsBody(),
+    );
+  }
+}
+
+/// The You tab's content — privacy/security, appearance, reminders, language,
+/// data (backup, accountability, therapy notes) and support.
+class SettingsBody extends StatelessWidget {
+  const SettingsBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,161 +38,154 @@ class SettingsScreen extends StatelessWidget {
     final settings = context.watch<SettingsProvider>();
     final themeService = context.watch<ThemeService>();
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBg,
-      appBar: AppBar(
-        title: Text(language(context, appFonts.settings),
-            style: appCss.headingBold22.textColor(theme.darkText)),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        children: [
-          _SectionLabel('Privacy & security', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _SwitchRow(
-                icon: Icons.lock_outline_rounded,
-                title: 'App lock',
-                subtitle: 'Require a PIN to open Momentum',
-                value: settings.appLockEnabled,
-                theme: theme,
-                onChanged: (v) => _toggleLock(context, settings, v),
-              ),
-              if (settings.appLockEnabled) ...[
-                _Divider(theme: theme),
-                _SwitchRow(
-                  icon: Icons.fingerprint_rounded,
-                  title: 'Unlock with biometrics',
-                  subtitle: 'Face ID / fingerprint',
-                  value: settings.biometricEnabled,
-                  theme: theme,
-                  onChanged: (v) => _toggleBiometric(context, settings, v),
-                ),
-              ],
-              _Divider(theme: theme),
-              _SwitchRow(
-                icon: Icons.visibility_off_outlined,
-                title: 'Discreet mode',
-                subtitle: 'Show a neutral icon on your home screen',
-                value: settings.discreetMode,
-                theme: theme,
-                onChanged: settings.setDiscreet,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _SectionLabel('Appearance', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _ThemePicker(
-                index: themeService.themeIndex,
-                onChanged: themeService.setThemeIndex,
-                theme: theme,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _SectionLabel('Reminders', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _SwitchRow(
-                icon: Icons.notifications_none_rounded,
-                title: 'Smart reminders',
-                subtitle:
-                    'Gentle, private check-ins timed around your own patterns',
-                value: settings.notificationsEnabled,
-                theme: theme,
-                onChanged: (v) => settings.setNotificationsEnabled(v),
-              ),
-              if (settings.notificationsEnabled) ...[
-                _Divider(theme: theme),
-                _LinkRow(
-                  icon: Icons.schedule_rounded,
-                  title: 'Daily check-in time',
-                  trailing: _fmtHour(settings.checkInHour),
-                  theme: theme,
-                  onTap: () => _pickCheckInHour(context, settings),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 20),
-          _SectionLabel('Language', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _LanguagePicker(
-                current: context.watch<LanguageProvider>().localeCode,
-                onChanged: (code) {
-                  context.read<LanguageProvider>().setLocale(code);
-                  // Re-localize bundled content (falls back to English per file).
-                  contentService.reloadForLocale(code);
-                },
-                theme: theme,
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _SectionLabel('Data', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _LinkRow(
-                icon: Icons.backup_outlined,
-                title: 'Backup & export',
-                theme: theme,
-                onTap: () => route.pushNamed(context, routeName.backup),
-              ),
-              _Divider(theme: theme),
-              _LinkRow(
-                icon: Icons.people_alt_outlined,
-                title: 'Accountability partner',
-                theme: theme,
-                onTap: () => route.pushNamed(context, routeName.accountability),
-              ),
-              _Divider(theme: theme),
-              _LinkRow(
-                icon: Icons.medical_services_outlined,
-                title: 'Therapy notes',
-                theme: theme,
-                onTap: () =>
-                    route.pushNamed(context, routeName.professionalNotes),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          _SectionLabel('Support', theme: theme),
-          _SettingCard(
-            theme: theme,
-            children: [
-              _LinkRow(
-                icon: Icons.support_agent_rounded,
-                title: language(context, appFonts.crisisResources),
-                theme: theme,
-                onTap: () =>
-                    route.pushNamed(context, routeName.crisisResources),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: theme.primarySoft,
-              borderRadius: BorderRadius.circular(14),
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      children: [
+        _SectionLabel('Privacy & security', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _SwitchRow(
+              icon: Icons.lock_outline_rounded,
+              title: 'App lock',
+              subtitle: 'Require a PIN to open Momentum',
+              value: settings.appLockEnabled,
+              theme: theme,
+              onChanged: (v) => _toggleLock(context, settings, v),
             ),
-            child: Text(
-              language(context, appFonts.notMedicalCare),
-              style: appCss.label12.textColor(theme.darkText),
+            if (settings.appLockEnabled) ...[
+              _Divider(theme: theme),
+              _SwitchRow(
+                icon: Icons.fingerprint_rounded,
+                title: 'Unlock with biometrics',
+                subtitle: 'Face ID / fingerprint',
+                value: settings.biometricEnabled,
+                theme: theme,
+                onChanged: (v) => _toggleBiometric(context, settings, v),
+              ),
+            ],
+            _Divider(theme: theme),
+            _SwitchRow(
+              icon: Icons.visibility_off_outlined,
+              title: 'Discreet mode',
+              subtitle: 'Show a neutral icon on your home screen',
+              value: settings.discreetMode,
+              theme: theme,
+              onChanged: settings.setDiscreet,
             ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionLabel('Appearance', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _ThemePicker(
+              index: themeService.themeIndex,
+              onChanged: themeService.setThemeIndex,
+              theme: theme,
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionLabel('Reminders', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _SwitchRow(
+              icon: Icons.notifications_none_rounded,
+              title: 'Smart reminders',
+              subtitle:
+                  'Gentle, private check-ins timed around your own patterns',
+              value: settings.notificationsEnabled,
+              theme: theme,
+              onChanged: (v) => settings.setNotificationsEnabled(v),
+            ),
+            if (settings.notificationsEnabled) ...[
+              _Divider(theme: theme),
+              _LinkRow(
+                icon: Icons.schedule_rounded,
+                title: 'Daily check-in time',
+                trailing: _fmtHour(settings.checkInHour),
+                theme: theme,
+                onTap: () => _pickCheckInHour(context, settings),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionLabel('Language', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _LanguagePicker(
+              current: context.watch<LanguageProvider>().localeCode,
+              onChanged: (code) {
+                context.read<LanguageProvider>().setLocale(code);
+                // Re-localize bundled content (falls back to English per file).
+                contentService.reloadForLocale(code);
+              },
+              theme: theme,
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionLabel('Data', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _LinkRow(
+              icon: Icons.backup_outlined,
+              title: 'Backup & export',
+              theme: theme,
+              onTap: () => route.pushNamed(context, routeName.backup),
+            ),
+            _Divider(theme: theme),
+            _LinkRow(
+              icon: Icons.people_alt_outlined,
+              title: 'Accountability partner',
+              theme: theme,
+              onTap: () => route.pushNamed(context, routeName.accountability),
+            ),
+            _Divider(theme: theme),
+            _LinkRow(
+              icon: Icons.medical_services_outlined,
+              title: 'Therapy notes',
+              theme: theme,
+              onTap: () =>
+                  route.pushNamed(context, routeName.professionalNotes),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        _SectionLabel('Support', theme: theme),
+        _SettingCard(
+          theme: theme,
+          children: [
+            _LinkRow(
+              icon: Icons.support_agent_rounded,
+              title: language(context, appFonts.crisisResources),
+              theme: theme,
+              onTap: () =>
+                  route.pushNamed(context, routeName.crisisResources),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: theme.primarySoft,
+            borderRadius: BorderRadius.circular(14),
           ),
-          const SizedBox(height: 20),
-          const Center(child: BannerAdWidget()),
-        ],
-      ),
+          child: Text(
+            language(context, appFonts.notMedicalCare),
+            style: appCss.label12.textColor(theme.darkText),
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Center(child: BannerAdWidget()),
+      ],
     );
   }
 
