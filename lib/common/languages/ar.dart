@@ -43,4 +43,10 @@ const Map<String, String> ar = {
   'appLock': 'قفل التطبيق',
   'privacy': 'الخصوصية',
   'theme': 'المظهر',
+
+  'tabHome': 'الرئيسية',
+  'tabInsights': 'الإحصاءات',
+  'tabTools': 'الأدوات',
+  'tabLearn': 'تعلّم',
+  'tabYou': 'أنت',
 };

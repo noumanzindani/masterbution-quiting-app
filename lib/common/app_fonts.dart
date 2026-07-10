@@ -51,4 +51,11 @@ class AppFonts {
   final String appLock = 'appLock';
   final String privacy = 'privacy';
   final String theme = 'theme';
+
+  // Bottom-nav tab labels
+  final String tabHome = 'tabHome';
+  final String tabInsights = 'tabInsights';
+  final String tabTools = 'tabTools';
+  final String tabLearn = 'tabLearn';
+  final String tabYou = 'tabYou';
 }
