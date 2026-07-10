@@ -5,54 +5,41 @@ import '../../providers/dashboard_provider.dart';
 import '../../services/emergency_flow.dart';
 import '../../services/streak_service.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
-import '../../widgets/primary_button.dart';
 import '../onboarding/assessment_content.dart';
 import 'log_sheets.dart';
 
-/// The home dashboard — the app's core loop surface: see progress at a glance,
-/// log an urge / slip / check-in, and reach the Panic button at any time.
+/// The Home tab's content — the app's core loop surface: see progress at a
+/// glance and log an urge / slip / check-in. Hosted inside [MainShellScreen]'s
+/// IndexedStack; owns no Scaffold/AppBar of its own — the shell supplies both,
+/// plus the pinned [SosBar] above this content.
 ///
-/// [DashboardProvider] is scoped here so a fresh push (e.g. right after
-/// onboarding saves the goal) reloads current data automatically.
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+/// [DashboardProvider] is scoped here so returning to this tab (e.g. right
+/// after onboarding saves the goal) reloads current data automatically.
+class HomeTabBody extends StatelessWidget {
+  const HomeTabBody({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => DashboardProvider(),
-      child: const _DashboardView(),
+      child: const _DashboardBody(),
     );
   }
 }
 
-class _DashboardView extends StatelessWidget {
-  const _DashboardView();
+class _DashboardBody extends StatelessWidget {
+  const _DashboardBody();
 
   @override
   Widget build(BuildContext context) {
     final theme = appColor(context);
     final p = context.watch<DashboardProvider>();
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBg,
-      appBar: AppBar(
-        title: Text(language(context, appFonts.dashboard),
-            style: appCss.headingBold22.textColor(theme.darkText)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings_outlined, color: theme.darkText),
-            onPressed: () => route.pushNamed(context, routeName.settings),
-          ),
-        ],
-      ),
-      body: p.loading
-          ? const Center(child: CircularProgressIndicator())
-          : p.goal == null
-              ? _EmptyState(theme: theme)
-              : _Content(goal: p.goal!, stats: p.stats, theme: theme),
-      bottomNavigationBar: p.goal == null ? null : _PanicBar(theme: theme),
-    );
+    return p.loading
+        ? const Center(child: CircularProgressIndicator())
+        : p.goal == null
+            ? _EmptyState(theme: theme)
+            : _Content(goal: p.goal!, stats: p.stats, theme: theme);
   }
 }
 
@@ -92,62 +79,6 @@ class _Content extends StatelessWidget {
               ),
             ],
           ),
-        const SizedBox(height: 12),
-        _NavRow(
-          icon: Icons.insights_rounded,
-          title: 'Your patterns',
-          subtitle: 'Triggers, timing and weekly trend',
-          route: routeName.insights,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.task_alt_rounded,
-          title: 'Habits',
-          subtitle: 'Build wins alongside recovery',
-          route: routeName.habits,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.mood_rounded,
-          title: 'Mood journal',
-          subtitle: 'Notice and name how you feel',
-          route: routeName.moodJournal,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.forum_rounded,
-          title: 'Coach & check-ins',
-          subtitle: 'Talk it through, reflect, and plan your day',
-          route: routeName.coachHub,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.emoji_events_rounded,
-          title: 'Milestones & rewards',
-          subtitle: 'Badges you\'ve earned and themes to unlock',
-          route: routeName.rewards,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.spa_rounded,
-          title: 'Wellbeing',
-          subtitle: 'Mindfulness, mood, sleep, self-esteem, and more',
-          route: routeName.wellbeing,
-          theme: theme,
-        ),
-        const SizedBox(height: 10),
-        _NavRow(
-          icon: Icons.menu_book_rounded,
-          title: 'Learn',
-          subtitle: 'Lessons, motivation, and things to do instead',
-          route: routeName.learn,
-          theme: theme,
-        ),
         const SizedBox(height: 20),
         Text('Quick actions',
             style: appCss.titleSemi16.textColor(theme.darkText)),
@@ -241,58 +172,6 @@ class _StreakHero extends StatelessWidget {
 
 /// Naive English pluralization for small day counts ("1 day", "2 days").
 String _plural(int n, String word) => n == 1 ? word : '${word}s';
-
-class _NavRow extends StatelessWidget {
-  const _NavRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.route,
-    required this.theme,
-  });
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String route;
-  final AppTheme theme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: theme.cardBg,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: () => Navigator.pushNamed(context, route),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: theme.stroke),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: theme.primary, size: 24),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: appCss.titleSemi16.textColor(theme.darkText)),
-                    Text(subtitle,
-                        style: appCss.label12.textColor(theme.lightText)),
-                  ],
-                ),
-              ),
-              Icon(Icons.chevron_right_rounded, color: theme.lightText),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _ScoreCard extends StatelessWidget {
   const _ScoreCard({
@@ -449,30 +328,6 @@ class _ActionTile extends StatelessWidget {
               Text(label, style: appCss.titleSemi16.textColor(theme.darkText)),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// --- Panic bar (always reachable) -------------------------------------------
-
-class _PanicBar extends StatelessWidget {
-  const _PanicBar({required this.theme});
-  final AppTheme theme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-      color: theme.scaffoldBg,
-      child: SafeArea(
-        top: false,
-        child: PrimaryButton(
-          label: 'I need help right now',
-          icon: Icons.shield_outlined,
-          color: theme.accent,
-          onPressed: () => route.pushNamed(context, routeName.panic),
         ),
       ),
     );
