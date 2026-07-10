@@ -98,6 +98,19 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          _SectionLabel('Data', theme: theme),
+          _SettingCard(
+            theme: theme,
+            children: [
+              _LinkRow(
+                icon: Icons.backup_outlined,
+                title: 'Backup & export',
+                theme: theme,
+                onTap: () => route.pushNamed(context, routeName.backup),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           _SectionLabel('Support', theme: theme),
           _SettingCard(
             theme: theme,
