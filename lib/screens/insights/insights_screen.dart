@@ -385,7 +385,7 @@ class _EmptyState extends StatelessWidget {
                 style: appCss.titleSemi18.textColor(theme.darkText)),
             const SizedBox(height: 8),
             Text(
-              'Keep logging urges and check-ins. Once there\'s enough to be meaningful, your personal patterns show up here - never before, so nothing here is guesswork.',
+              'Keep logging urges and check-ins. Once there’s enough to be meaningful, your personal patterns show up here — never before, so nothing here is guesswork.',
               textAlign: TextAlign.center,
               style: appCss.body14.textColor(theme.lightText),
             ),
