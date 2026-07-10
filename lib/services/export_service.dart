@@ -12,6 +12,7 @@ import '../data/collections/habit_tick.dart';
 import '../data/collections/journal_entry.dart';
 import '../data/collections/mood_entry.dart';
 import '../data/collections/recovery_goal.dart';
+import '../data/collections/session_note.dart';
 import '../data/collections/sleep_entry.dart';
 import '../data/collections/tracker_event.dart';
 import '../data/enums.dart';
@@ -29,12 +30,13 @@ class ExportSections {
   static const mood = 'mood';
   static const cbt = 'cbt';
   static const sleep = 'sleep';
+  static const notes = 'notes';
   static const prefs = 'prefs';
 
   /// Everything, in a stable order.
   static const all = <String>[
     tracker, goals, assessments, journal, habits, habitTicks, mood, cbt, sleep,
-    prefs,
+    notes, prefs,
   ];
 }
 
@@ -182,6 +184,18 @@ class ExportService {
             'wakeMinutes': s.wakeMinutes,
             'quality': s.quality,
             'note': s.note,
+          }
+      ],
+      ExportSections.notes: [
+        for (final n in await isar.sessionNotes.where().sortByTimestampUtc().findAll())
+          {
+            'id': n.id,
+            'ts': _iso(n.timestampUtc),
+            'dateEpochDay': n.dateEpochDay,
+            'title': n.title,
+            'note': n.note,
+            'homework': n.homework,
+            'homeworkDone': n.homeworkDone,
           }
       ],
       ExportSections.prefs: {
@@ -354,6 +368,21 @@ class ExportService {
               ..wakeMinutes = r['wakeMinutes'] as int
               ..quality = r['quality'] as int
               ..note = r['note'] as String?
+        ]);
+        restored += rows.length;
+      }
+      if (data[ExportSections.notes] case final List rows) {
+        await isar.sessionNotes.clear();
+        await isar.sessionNotes.putAll([
+          for (final r in rows.cast<Map>())
+            SessionNote()
+              ..id = r['id'] as int
+              ..timestampUtc = _dt(r['ts'])
+              ..dateEpochDay = r['dateEpochDay'] as int
+              ..title = r['title'] as String? ?? ''
+              ..note = r['note'] as String? ?? ''
+              ..homework = r['homework'] as String?
+              ..homeworkDone = r['homeworkDone'] as bool? ?? false
         ]);
         restored += rows.length;
       }

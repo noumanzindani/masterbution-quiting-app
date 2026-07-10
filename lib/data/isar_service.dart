@@ -8,6 +8,7 @@ import 'collections/habit_tick.dart';
 import 'collections/journal_entry.dart';
 import 'collections/mood_entry.dart';
 import 'collections/recovery_goal.dart';
+import 'collections/session_note.dart';
 import 'collections/sleep_entry.dart';
 import 'collections/tracker_event.dart';
 
@@ -37,6 +38,7 @@ class IsarService {
         MoodEntrySchema,
         CbtEntrySchema,
         SleepEntrySchema,
+        SessionNoteSchema,
       ],
       directory: dir.path,
       // A stable name keeps the DB file predictable for export/import later.

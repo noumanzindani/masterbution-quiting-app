@@ -108,6 +108,21 @@ class SettingsScreen extends StatelessWidget {
                 theme: theme,
                 onTap: () => route.pushNamed(context, routeName.backup),
               ),
+              _Divider(theme: theme),
+              _LinkRow(
+                icon: Icons.people_alt_outlined,
+                title: 'Accountability partner',
+                theme: theme,
+                onTap: () => route.pushNamed(context, routeName.accountability),
+              ),
+              _Divider(theme: theme),
+              _LinkRow(
+                icon: Icons.medical_services_outlined,
+                title: 'Therapy notes',
+                theme: theme,
+                onTap: () =>
+                    route.pushNamed(context, routeName.professionalNotes),
+              ),
             ],
           ),
           const SizedBox(height: 20),

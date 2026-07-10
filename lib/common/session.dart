@@ -51,6 +51,8 @@ class Session {
   final String notifQuietStart = 'notifQuietStart'; // int 0–23, quiet-window start
   final String notifQuietEnd = 'notifQuietEnd'; // int 0–23, quiet-window end
   final String panicContactId = 'panicContactId';
+  final String accountabilityName = 'accountabilityName';
+  final String accountabilityPhone = 'accountabilityPhone';
   final String contentPackVersion = 'contentPackVersion';
   final String coinsBalanceCache = 'coinsBalanceCache';
 }

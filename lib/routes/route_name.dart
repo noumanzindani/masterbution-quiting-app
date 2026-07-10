@@ -55,6 +55,8 @@ class RouteName {
   final String wellbeingModule = 'wellbeingModule';
   final String sleepLog = 'sleepLog';
   final String backup = 'backup';
+  final String accountability = 'accountability';
+  final String professionalNotes = 'professionalNotes';
 
   final String settings = 'settings';
 }

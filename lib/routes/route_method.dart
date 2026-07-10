@@ -32,6 +32,8 @@ import '../screens/mood/mood_journal_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/rewards/rewards_screen.dart';
 import '../screens/settings/backup_screen.dart';
+import '../screens/social/accountability_screen.dart';
+import '../screens/social/professional_notes_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/sleep/sleep_log_screen.dart';
 import '../screens/wellbeing/wellbeing_hub_screen.dart';
@@ -87,5 +89,7 @@ class AppRoute {
         _r.wellbeingModule: (_) => const WellbeingModuleScreen(),
         _r.sleepLog: (_) => const SleepLogScreen(),
         _r.backup: (_) => const BackupScreen(),
+        _r.accountability: (_) => const AccountabilityScreen(),
+        _r.professionalNotes: (_) => const ProfessionalNotesScreen(),
       };
 }
