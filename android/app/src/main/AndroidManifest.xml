@@ -33,6 +33,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Discreet mode: a neutral launcher entry (own name + icon). Disabled
+             by default. MainActivity and this alias are toggled at runtime so
+             exactly one is ever enabled (see MainActivity.kt); the app therefore
+             always keeps a single launcher icon. -->
+        <activity-alias
+            android:name=".DisguiseAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_disguise"
+            android:label="Utilities"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
         <!-- Google AdMob: TEST application id (swap for the real id before store release).
              The SDK requires this at launch even before MobileAds.initialize() runs. -->
         <meta-data

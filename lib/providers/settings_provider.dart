@@ -44,6 +44,9 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> setDiscreet(bool on) async {
     await prefs.setBool(session.discreetModeEnabled, on);
+    // Ask the platform to switch the launcher icon (and Android name). The pref
+    // above is the source of truth; this is a best-effort cosmetic change.
+    await disguise.apply(on);
     notifyListeners();
   }
 

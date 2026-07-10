@@ -23,6 +23,7 @@ import 'data/repositories/tracker_event_repo.dart';
 import 'helper/navigation_class.dart';
 import 'packages_list.dart';
 import 'services/ad_service.dart';
+import 'services/disguise_service.dart';
 import 'services/notification_service.dart';
 
 // Re-exports so `import 'config.dart'` is enough for most files.
@@ -78,6 +79,11 @@ final NotificationService notificationService = NotificationService();
 /// Bundled content corpus (articles, quotes, alternatives). Preloaded in
 /// [AppInit]; screens read from it synchronously.
 final ContentService contentService = ContentService();
+
+/// Discreet-mode gateway: switches the home-screen icon (and Android launcher
+/// name) to a neutral disguise. Driven by the `discreetMode` pref; degrades to
+/// a no-op where the platform can't switch icons.
+final DisguiseService disguise = const DisguiseService();
 
 // --- Context helpers ---------------------------------------------------------
 

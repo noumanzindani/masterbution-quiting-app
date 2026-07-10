@@ -47,6 +47,11 @@ class AppInit {
     // empty on failure, and to English per-file when a translation is missing).
     await contentService.preload(locale: prefs.getString(session.locale) ?? 'en');
 
+    // Keep the launcher icon in sync with the saved discreet-mode preference
+    // (the native state persists across installs of the same build, but this
+    // guarantees they never drift). No-op where unsupported.
+    await disguise.apply(prefs.getBool(session.discreetModeEnabled) ?? false);
+
     // Record first-launch date once (used for lifetime stats, no PII).
     if (prefs.getString(session.firstLaunchDate) == null) {
       prefs.setString(

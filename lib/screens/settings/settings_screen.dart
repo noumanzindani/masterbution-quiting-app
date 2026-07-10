@@ -52,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
               _SwitchRow(
                 icon: Icons.visibility_off_outlined,
                 title: 'Discreet mode',
-                subtitle: 'Neutral name & icon (applied in a later update)',
+                subtitle: 'Show a neutral icon on your home screen',
                 value: settings.discreetMode,
                 theme: theme,
                 onChanged: settings.setDiscreet,
