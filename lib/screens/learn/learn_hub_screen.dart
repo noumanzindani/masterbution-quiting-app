@@ -2,6 +2,9 @@ import '../../config.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
 
 /// The "Learn" hub — entry point to the content library. Non-crisis screen.
+///
+/// Thin wrapper around [LearnHubBody] so the route still works if pushed
+/// directly; [MainShellScreen] embeds [LearnHubBody] as the Learn tab.
 class LearnHubScreen extends StatelessWidget {
   const LearnHubScreen({super.key});
 
@@ -14,62 +17,73 @@ class LearnHubScreen extends StatelessWidget {
         title: Text('Learn',
             style: appCss.headingBold22.textColor(theme.darkText)),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        children: [
-          _HubTile(
-            icon: Icons.menu_book_rounded,
-            title: 'Academy',
-            subtitle: 'Short lessons, plus quizzes to test yourself',
-            route: routeName.academy,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.psychology_rounded,
-            title: 'CBT toolkit',
-            subtitle: 'Worksheets to examine thoughts and triggers',
-            route: routeName.cbt,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.bolt_rounded,
-            title: 'Instead of… ',
-            subtitle: 'Healthy things to do with the time you have',
-            route: routeName.alternatives,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.headphones_rounded,
-            title: 'Guided sessions',
-            subtitle: 'Short, self-paced calming practices',
-            route: routeName.sessions,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.restart_alt_rounded,
-            title: '7-day dopamine reset',
-            subtitle: 'Let your reward system recalibrate',
-            route: routeName.program,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.explore_rounded,
-            title: 'Your values',
-            subtitle: 'What you\'re moving toward',
-            route: routeName.values,
-            theme: theme,
-          ),
-          _HubTile(
-            icon: Icons.auto_awesome_rounded,
-            title: 'Motivation',
-            subtitle: 'A daily quote and real success stories',
-            route: routeName.motivation,
-            theme: theme,
-          ),
-          const SizedBox(height: 20),
-          const Center(child: BannerAdWidget()),
-        ],
-      ),
+      body: const LearnHubBody(),
+    );
+  }
+}
+
+/// The Learn tab's content — content-library entry points.
+class LearnHubBody extends StatelessWidget {
+  const LearnHubBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = appColor(context);
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+      children: [
+        _HubTile(
+          icon: Icons.menu_book_rounded,
+          title: 'Academy',
+          subtitle: 'Short lessons, plus quizzes to test yourself',
+          route: routeName.academy,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.psychology_rounded,
+          title: 'CBT toolkit',
+          subtitle: 'Worksheets to examine thoughts and triggers',
+          route: routeName.cbt,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.bolt_rounded,
+          title: 'Instead of… ',
+          subtitle: 'Healthy things to do with the time you have',
+          route: routeName.alternatives,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.headphones_rounded,
+          title: 'Guided sessions',
+          subtitle: 'Short, self-paced calming practices',
+          route: routeName.sessions,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.restart_alt_rounded,
+          title: '7-day dopamine reset',
+          subtitle: 'Let your reward system recalibrate',
+          route: routeName.program,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.explore_rounded,
+          title: 'Your values',
+          subtitle: 'What you\'re moving toward',
+          route: routeName.values,
+          theme: theme,
+        ),
+        _HubTile(
+          icon: Icons.auto_awesome_rounded,
+          title: 'Motivation',
+          subtitle: 'A daily quote and real success stories',
+          route: routeName.motivation,
+          theme: theme,
+        ),
+        const SizedBox(height: 20),
+        const Center(child: BannerAdWidget()),
+      ],
     );
   }
 }
