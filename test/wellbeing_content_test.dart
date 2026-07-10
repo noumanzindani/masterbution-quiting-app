@@ -59,4 +59,10 @@ void main() {
     final ids = modules.map((m) => m.id).toList();
     expect(ids.toSet().length, ids.length);
   });
+
+  test('the sleep module wires up the sleep tracker', () {
+    final sleep = modules.firstWhere((m) => m.id == 'sleep');
+    expect(sleep.tracker, 'sleepLog',
+        reason: 'sleep module should surface the nightly tracker');
+  });
 }

@@ -8,6 +8,7 @@ import 'collections/habit_tick.dart';
 import 'collections/journal_entry.dart';
 import 'collections/mood_entry.dart';
 import 'collections/recovery_goal.dart';
+import 'collections/sleep_entry.dart';
 import 'collections/tracker_event.dart';
 
 /// Owns the single [Isar] instance for the whole app.
@@ -35,6 +36,7 @@ class IsarService {
         HabitTickSchema,
         MoodEntrySchema,
         CbtEntrySchema,
+        SleepEntrySchema,
       ],
       directory: dir.path,
       // A stable name keeps the DB file predictable for export/import later.

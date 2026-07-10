@@ -6,22 +6,20 @@ enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memo
 travel with a `git clone`. This file replaces that.
 
 - **Last updated:** 2026-07-10
-- **Where we are:** Phases 0–4 core complete. **Phase 5 nearly done** — 5.1 gamification/rewards + 5.2 the six
-  wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood, sleep) are built. `flutter
-  analyze` clean, **97 unit tests green**, app boots on sim.
-- **What's next:** the ONE remaining Phase 5 piece — **sleep *tracking*** (a `SleepEntry` Isar collection +
-  a log screen + rule-based tips; needs `build_runner`). Then **Phase 6** (smart notifications + emergency
-  mode). See §11.
+- **Where we are:** **Phases 0–5 COMPLETE** — 5.1 gamification/rewards + 5.2 the six wellbeing modules
+  (mindfulness, self-esteem, relationships, anxiety, low-mood, sleep) + 5.3 nightly **sleep tracking** with a
+  rule-based tips engine. `flutter analyze` clean, **111 unit tests green**, app boots on sim.
+- **What's next:** **Phase 6** — smart notifications (rule-based, seeded by Phase-2 high-risk buckets),
+  emergency recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing. See §11.
 
 ---
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 97 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 111 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
-2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5 status + what remains) for the next build.
-3. Phase 4 + Phase 5 (rewards + wellbeing modules) are done bar sleep-tracking; do that (§8) or start Phase 6
-   (§11). Keep the clinical guardrails in §6 sacred.
+2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5 status) for context.
+3. Phases 0–5 are complete. Start **Phase 6** (§11). Keep the clinical guardrails in §6 sacred.
 
 Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
 
@@ -49,7 +47,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 97 unit tests, must be green
+flutter test                    # 111 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -77,7 +75,7 @@ lib/
     cbt_models.dart, quiz_models.dart, session_models.dart, program_models.dart (Program/ProgramDay/ValueItem)
   data/                Isar layer:
     enums.dart         SINGLE SOURCE OF TRUTH for enums. ⚠ On-disk contract — see §5.
-    isar_service.dart  Opens Isar ('momentum' db), registers all 8 collection schemas.
+    isar_service.dart  Opens Isar ('momentum' db), registers all 9 collection schemas.
     time_buckets.dart  DST-safe local-day index (see §9).
     trigger_labels.dart
     collections/       8 @collection classes + generated *.g.dart (committed).
@@ -128,10 +126,11 @@ the app's real logic runs in milliseconds on CI without a simulator. **Reuse the
 
 ## 5. Data layer & the on-disk contract
 
-**8 Isar collections** (registered in `isar_service.dart`): `TrackerEvent` (the analytics workhorse — every
+**9 Isar collections** (registered in `isar_service.dart`): `TrackerEvent` (the analytics workhorse — every
 urge/lapse/win/check-in; denormalized indexed `hourOfDay`/`weekday`/`dateEpochDay` for cheap GROUP-BY),
 `RecoveryGoal` (+ embedded `Milestone`), `AssessmentResult`, `JournalEntry`, `HabitDefinition`, `HabitTick`,
-`MoodEntry` (has reserved nullable `voicePath`/`photoPath`), `CbtEntry` (answers as JSON keyed by step id).
+`MoodEntry` (has reserved nullable `voicePath`/`photoPath`), `CbtEntry` (answers as JSON keyed by step id),
+`SleepEntry` (bedtime/wake as minute-of-day, quality, note; `@ignore` `durationMinutes` getter).
 
 ⚠️ **`lib/data/enums.dart` is an on-disk contract.** Isar persists `@enumerated` fields **by index**, so
 reordering an existing enum silently corrupts stored data. **Only ever append** new enum values.
@@ -233,6 +232,23 @@ and `SessionPlayerScreen` — so a new module is JSON only. Content lives in sep
 `WellbeingHubScreen`. Validated by `test/wellbeing_content_test.dart` (every referenced id resolves — no
 module tile can open an empty screen).
 
+### G. Sleep tracking (Phase 5, increment 5.3)
+
+`SleepEntry` Isar collection (9th) stores each night as **local minute-of-day** bedtime/wake (not DateTimes, so
+the "23:00→07:00" midnight wrap is plain arithmetic), a 1–5 `quality`, and an optional note; the `@ignore`
+`durationMinutes` getter resolves the wrap. `SleepRepo` **upserts one entry per wake-day** (`dateEpochDay`), so
+re-logging a night corrects it rather than duplicating. The tips are a **pure, statistics-only
+`SleepTipsEngine`** (`lib/services/sleep_tips_engine.dart`, TDD — `test/sleep_tips_engine_test.dart`, 10 tests):
+a **min-sample gate** (<3 nights → a single encouraging "log a few nights" tip, never a shaming pattern), then
+short-sleep (<7h), late-bedtime, schedule-inconsistency, and low-quality rules, else an "on track" nudge.
+Bedtimes before noon are **anchored +1440** so an evening→morning window is monotonic — "how late" and "how
+spread out" become plain comparisons instead of circular statistics. `SleepProvider` (screen-scoped) maps recent
+entries → engine; `SleepLogScreen` (route `sleepLog`) has the log form (time pickers + quality + note), the
+tips, and recent-nights history. Surfaced via a new **optional `WellbeingModule.tracker` route field** (JSON
+only) → a "Track your sleep" CTA atop the sleep module (any future module could point at its own tracker the
+same way). The engine deliberately carries **no navigation** — it stays pure; the screen surfaces the sleep
+module's existing `wind_down` session / `sleep_hygiene` article.
+
 ---
 
 ## 8. Phase 4 & 5 — status & what remains
@@ -247,22 +263,26 @@ crisis flow). `action` tokens recognised: `saveReflection:relapse`, `saveReflect
 *Optional polish:* an explicit relapse-analysis→plan-adjustment step (today the coping plan is captured as a
 journal entry); more coach flows.
 
-### Phase 5 (gamification + wellbeing) — 5.1 + 5.2 done, only sleep-tracking remains
+### Phase 5 (gamification + wellbeing + sleep) — COMPLETE
 
 **5.1 gamification/rewards — DONE (see §7.E):** `RewardEngine` (TDD), achievements JSON, coins, rewarded ads,
 unlockable accent themes, `RewardsScreen`.
 
 **5.2 wellbeing modules — DONE (see §7.F):** six modules (mindfulness, self-esteem, relationships, anxiety,
 low-mood-with-disclaimer, sleep-hygiene) as pure content over the reused article reader + session player.
-97 tests green; app boots on sim. *GUI click-through still blocked this session by macOS Automation
-permissions — logic covered by the engine + content-validation tests.*
 
-**Remaining Phase 5 — sleep TRACKING (the one data feature left):** the sleep module currently offers
-recommendations only (a hygiene article + wind-down session). To finish it, add a **`SleepEntry` Isar
-collection** (bedtime, wake, quality/rating), register its schema in `isar_service.dart`, run `build_runner`,
-add a `SleepRepo`, a simple nightly log screen, and a small **rule-based tips engine** (TDD it — e.g. "your
-average is under 6h → try an earlier wind-down"). Surface it from the sleep wellbeing module. This is the last
-Phase-5 item before Phase 6.
+**5.3 sleep TRACKING — DONE:** `SleepEntry` Isar collection (9th; `bedtimeMinutes`/`wakeMinutes` as local
+minute-of-day, `quality` 1–5, `note`; `@ignore` `durationMinutes` getter resolves the midnight wrap) +
+`SleepRepo` (upserts one entry per wake-day so re-logging corrects, not duplicates). Pure **`SleepTipsEngine`**
+(TDD, 10 tests) — statistics-only, min-sample gate (<3 nights → starter tip; no shaming), short-sleep,
+late-bedtime (anchors pre-noon bedtimes +1440 → monotonic evening→morning axis), inconsistency (spread >90min),
+low-quality, else on_track. `SleepProvider` (screen-scoped) + `SleepLogScreen` (route `sleepLog`: time pickers,
+1–5 quality, note → save; tips + recent-nights history). Surfaced via a new optional `WellbeingModule.tracker`
+route field (JSON-only) → "Track your sleep" CTA atop the sleep module.
+
+**111 tests green; app boots on sim (Isar opened with the new schema, dashboard verified).** *GUI click-through
+still blocked this session by macOS Automation permissions — the tips engine + `durationMinutes` wrap + content
+wiring are covered by unit tests; the screen reuses the verified provider+ListView+card render patterns.*
 
 ---
 
@@ -319,9 +339,9 @@ all 35 requested features to where each honestly lives (✅ local / 🔶 on-devi
 - **3 Content depth** ✅ — CBT, academy+quizzes, guided sessions, dopamine reset, motivation, alternatives, values.
 - **4 Interactive guidance** ✅ core — rule-based coach engine, relapse-reflection flow, daily reflection,
   daily planner. (Optional polish remains: explicit plan-adjustment step, more flows — see §8.)
-- **5 Gamification + wellbeing** 🔨 NEARLY DONE — ✅ rewards (badges/coins via **rewarded ads**, accent themes);
-  ✅ six wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood-with-disclaimer,
-  sleep-hygiene); ⏭ only **sleep tracking** (the `SleepEntry` data feature) remains.
+- **5 Gamification + wellbeing + sleep** ✅ — rewards (badges/coins via **rewarded ads**, accent themes);
+  six wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood-with-disclaimer,
+  sleep-hygiene); **sleep tracking** (`SleepEntry` + `SleepTipsEngine`, rule-based tips).
 - **6 Proactive** — rule-based adaptive smart notifications (seeded by Phase-2 high-risk buckets), emergency
   recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing.
 - **7 Privacy/export + social + i18n** — encrypted export/import + PDF/share, sharing controls, discreet

@@ -53,6 +53,10 @@ class WellbeingModuleScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _Disclaimer(text: module.disclaimer!, theme: theme),
           ],
+          if (module.tracker != null) ...[
+            const SizedBox(height: 20),
+            _TrackerCard(route: module.tracker!, theme: theme),
+          ],
           if (sessions.isNotEmpty) ...[
             const SizedBox(height: 24),
             Text('Practices',
@@ -99,6 +103,51 @@ class _Disclaimer extends StatelessWidget {
                 style: appCss.label12.textColor(theme.darkText).sized(13)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Prominent call-to-action for a module that has an interactive tracker
+/// (currently only the sleep module → nightly sleep log).
+class _TrackerCard extends StatelessWidget {
+  const _TrackerCard({required this.route, required this.theme});
+  final String route;
+  final AppTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: theme.primary,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () => Navigator.pushNamed(context, route),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const Icon(Icons.nights_stay_rounded,
+                  color: Colors.white, size: 26),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Track your sleep',
+                        style:
+                            appCss.titleSemi16.textColor(Colors.white)),
+                    const SizedBox(height: 2),
+                    Text('Log last night for personalised tips',
+                        style: appCss.label12
+                            .textColor(Colors.white.withValues(alpha: 0.85))),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: Colors.white),
+            ],
+          ),
+        ),
       ),
     );
   }

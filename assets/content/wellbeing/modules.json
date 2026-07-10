@@ -45,6 +45,7 @@
     "title": "Sleep",
     "subtitle": "Wind down and rest more easily",
     "icon": "bedtime",
+    "tracker": "sleepLog",
     "articles": ["sleep_hygiene"],
     "sessions": ["wind_down"]
   }

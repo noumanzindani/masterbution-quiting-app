@@ -13,9 +13,10 @@ Built under hard constraints, by design:
 - **Content bundled** as JSON assets (text-first).
 - Ships to **Android + iOS** from one Flutter codebase.
 
-> **Status:** Phases 0–4 core complete; Phase 5 nearly done — gamification (achievements, coins, rewarded
-> ads, accent themes) + six wellbeing modules built (97 unit tests, `flutter analyze` clean).
-> **Next:** sleep *tracking* (the last Phase 5 piece), then Phase 6 (smart notifications + emergency mode).
+> **Status:** Phases 0–5 complete — gamification (achievements, coins, rewarded ads, accent themes),
+> six wellbeing modules, and nightly sleep tracking with a rule-based tips engine (111 unit tests,
+> `flutter analyze` clean).
+> **Next:** Phase 6 (smart notifications + emergency mode).
 >
 > **👉 If you're resuming this project, read [`hand.md`](hand.md) first** — it's the full handoff
 > (architecture, engines, content system, gotchas, what's built, and exactly where to pick up).
@@ -33,7 +34,7 @@ flutter run                # Android or iOS device/simulator
 
 ```bash
 flutter analyze            # must be clean
-flutter test               # 97 unit tests, must be green
+flutter test               # 111 unit tests, must be green
 ```
 
 ## Tech stack
