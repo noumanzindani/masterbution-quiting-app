@@ -1,5 +1,6 @@
 import '../config.dart';
 import '../services/lock_service.dart';
+import '../services/notification_scheduling.dart';
 
 /// Owns the privacy/security + misc scalar settings (all SharedPreferences).
 /// Theme is handled by [ThemeService]; this covers app-lock, biometrics and
@@ -43,6 +44,34 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> setDiscreet(bool on) async {
     await prefs.setBool(session.discreetModeEnabled, on);
+    notifyListeners();
+  }
+
+  // --- Smart reminders ---
+
+  bool get notificationsEnabled =>
+      prefs.getBool(session.notificationsEnabled) ?? false;
+
+  int get checkInHour => prefs.getInt(session.notifCheckInHour) ?? 20;
+
+  /// Turn reminders on/off. Enabling first asks the OS for permission; if it's
+  /// declined the toggle stays off. Either way the schedule is refreshed.
+  Future<void> setNotificationsEnabled(bool on) async {
+    if (on) {
+      final granted = await notificationService.requestPermission();
+      if (!granted) {
+        notifyListeners(); // keep the switch reflecting the true (off) state
+        return;
+      }
+    }
+    await prefs.setBool(session.notificationsEnabled, on);
+    await NotificationScheduling.refresh();
+    notifyListeners();
+  }
+
+  Future<void> setCheckInHour(int hour) async {
+    await prefs.setInt(session.notifCheckInHour, hour);
+    await NotificationScheduling.refresh();
     notifyListeners();
   }
 }

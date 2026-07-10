@@ -6,20 +6,24 @@ enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memo
 travel with a `git clone`. This file replaces that.
 
 - **Last updated:** 2026-07-10
-- **Where we are:** **Phases 0–5 COMPLETE** — 5.1 gamification/rewards + 5.2 the six wellbeing modules
-  (mindfulness, self-esteem, relationships, anxiety, low-mood, sleep) + 5.3 nightly **sleep tracking** with a
-  rule-based tips engine. `flutter analyze` clean, **111 unit tests green**, app boots on sim.
-- **What's next:** **Phase 6** — smart notifications (rule-based, seeded by Phase-2 high-risk buckets),
-  emergency recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing. See §11.
+- **Where we are:** **Phases 0–6 COMPLETE**. Phase 6 (proactive intelligence): guided **emergency recovery
+  mode** (urge ≥ 9/10 forced sequence), a rule-based **risk-pattern engine**, and **smart local reminders**
+  (opt-in, quiet-hours-aware, timed off your own patterns). `flutter analyze` clean, **133 unit tests green**,
+  app boots on sim.
+- **What's next:** **Phase 7** — encrypted export/import + PDF/share, sharing controls, discreet icon/name,
+  accountability partner (prefilled SMS/WhatsApp), professional-support notes, full ar/fr/es i18n. See §11.
+- **⚠️ Phase 6 not verified this session:** actual notification *delivery* (needs a physical device + granted
+  permission) and the *Android build* (only the iOS sim was available; core-library desugaring was added — the
+  canonical fix — but not build-tested). Everything else is unit-tested + boots on the sim.
 
 ---
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 111 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 133 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
-2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5 status) for context.
-3. Phases 0–5 are complete. Start **Phase 6** (§11). Keep the clinical guardrails in §6 sacred.
+2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5/6 status) for context.
+3. Phases 0–6 are complete. Start **Phase 7** (§11). Keep the clinical guardrails in §6 sacred.
 
 Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
 
@@ -47,7 +51,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 111 unit tests, must be green
+flutter test                    # 133 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -249,6 +253,36 @@ only) → a "Track your sleep" CTA atop the sleep module (any future module coul
 same way). The engine deliberately carries **no navigation** — it stays pure; the screen surfaces the sleep
 module's existing `wind_down` session / `sleep_hygiene` article.
 
+### H. Proactive intelligence (Phase 6)
+
+Three pieces, all with the pure logic TDD'd and the side effects kept thin:
+
+- **Emergency recovery mode** (`services/emergency_flow.dart`, `screens/emergency/emergency_mode_screen.dart`).
+  `EmergencyFlow` (8 tests) owns the two decisions: `shouldEscalate(intensity) → intensity >= 9`, and the fixed
+  step order `breathe → ground → surf → reflect → close`. The screen is a **forced full-screen `PageView`
+  stepper** — no menu, so an at-peak urge doesn't demand a choice — with lightweight inline steps (a pulsing
+  breath orb, a 5-4-3-2-1 list, a 90s surf countdown, an optional note saved as `emergencyJournal`, a
+  non-shaming reframe). An exit is always shown; it guides, never traps. It's a **NO-AD** route (`emergencyMode`
+  was already in `AdPolicy.noAdRoutes`; Phase 6 just registered the screen). Two entry points share the one
+  tested rule: the panic hub's high-emphasis "It's really bad right now" card, and the urge-log sheet — which
+  now returns its intensity (`showLogUrgeSheet → Future<int?>`) so `home._logUrge` escalates automatically.
+- **Risk-pattern engine** (`services/risk_engine.dart`, 7 tests). `RiskEngine.profile(events)` → a `RiskProfile`
+  of `peakRiskHour` / `toughestWeekday` (numbers, where `AnalyticsEngine.insights` gives prose). Reuses the
+  Phase-2 histograms; gated (≥5 lapses **and** a peak bin ≥ 2) so a handful of points never becomes a verdict;
+  only lapses count as risk.
+- **Smart notifications** (`services/smart_scheduler.dart` + `notification_service.dart` +
+  `notification_scheduling.dart`). Pure `SmartScheduler.plan(profile, prefs)` (7 tests) emits deterministic
+  `ReminderSpec`s — a daily check-in, a heads-up an hour before the peak-risk hour, a weekly nudge on the tough
+  day — and **drops any that land in quiet hours** (default 22:00–07:00, midnight-wrap aware). Opt-in: `enabled`
+  defaults false. `NotificationService` wraps `flutter_local_notifications` v22 (all-named API) and, like
+  `AdService`, degrades to a no-op on any failure. **Timezone with no `flutter_timezone` dependency:** the
+  desired *local* wall-clock is converted to a concrete UTC instant and scheduled in `tz.UTC` with
+  `matchDateTimeComponents`; re-scheduled every launch via `NotificationScheduling.refresh()` (AppInit + on
+  settings change), so a DST change self-corrects on next open (≤1h drift meanwhile). Settings → **Reminders**:
+  an enable toggle (asks OS permission first; stays off if denied) + a daily check-in time picker. Android
+  manifest adds `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED` + the plugin's two receivers; `build.gradle.kts`
+  enables **core-library desugaring** (`desugar_jdk_libs:2.1.4`) — *required* or the Android build fails.
+
 ---
 
 ## 8. Phase 4 & 5 — status & what remains
@@ -342,8 +376,9 @@ all 35 requested features to where each honestly lives (✅ local / 🔶 on-devi
 - **5 Gamification + wellbeing + sleep** ✅ — rewards (badges/coins via **rewarded ads**, accent themes);
   six wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood-with-disclaimer,
   sleep-hygiene); **sleep tracking** (`SleepEntry` + `SleepTipsEngine`, rule-based tips).
-- **6 Proactive** — rule-based adaptive smart notifications (seeded by Phase-2 high-risk buckets), emergency
-  recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing.
+- **6 Proactive** ✅ — emergency recovery mode (`EmergencyFlow`, urge ≥ 9/10 forced sequence), risk-pattern
+  engine (`RiskEngine`), and rule-based smart local reminders (`SmartScheduler` + `NotificationService`,
+  opt-in + quiet-hours). *(Notification delivery + Android build unverified this session — see §8.)*
 - **7 Privacy/export + social + i18n** — encrypted export/import + PDF/share, sharing controls, discreet
   icon/name, accountability partner (prefilled SMS/WhatsApp via url_launcher), professional-support notes,
   full ar/fr/es localization.
@@ -364,6 +399,13 @@ cloud backup, live therapist directory, bundled audio.
 - [ ] Surface crisis resources; keep "screening, not a diagnosis" + "not a substitute for care" disclaimers.
 - [ ] Provide in-app **data wipe** (no account = no deletion endpoint needed).
 - [ ] Run the `store-readiness-audit` / `app-audit` skill.
+- [ ] **Verify the Android build** (`flutter build apk`) — Phase 6 added `flutter_local_notifications` v22, which
+      needs core-library desugaring (already in `build.gradle.kts`) + the manifest receivers. Only the iOS sim
+      was exercised when this was added.
+- [ ] **QA notification delivery on a physical device** — grant the runtime permission, confirm the daily
+      check-in / risk heads-up / tough-day reminders actually fire at the right local time (the schedule logic
+      is unit-tested, but on-device delivery wasn't exercised). Consider adding `flutter_timezone` if exact
+      DST/zone handling matters more than the current launch-reschedule approximation.
 - [ ] (Phase 7) Discreet icon/name — iOS `setAlternateIconName`, Android activity-alias.
 
 ---

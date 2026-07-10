@@ -29,6 +29,11 @@ class PanicScreen extends StatelessWidget {
             style: appCss.body14.textColor(theme.lightText),
           ),
           const SizedBox(height: 24),
+          _EscalateCard(
+            theme: theme,
+            onTap: () => route.pushNamed(context, routeName.emergencyMode),
+          ),
+          const SizedBox(height: 20),
           _ToolCard(
             icon: Icons.air_rounded,
             title: 'Breathe with me',
@@ -70,6 +75,50 @@ class PanicScreen extends StatelessWidget {
             onPressed: () => route.pop(context),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The escalation entry — a filled, high-emphasis card for when the urge is at
+/// its peak and choosing a single tool is itself too much. Launches the guided
+/// [EmergencyModeScreen] sequence.
+class _EscalateCard extends StatelessWidget {
+  const _EscalateCard({required this.theme, required this.onTap});
+  final AppTheme theme;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: theme.primary,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            children: [
+              const Icon(Icons.shield_rounded, color: Colors.white, size: 28),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('It\'s really bad right now',
+                        style: appCss.titleSemi16.textColor(Colors.white)),
+                    const SizedBox(height: 2),
+                    Text('Let me walk you through it, one step at a time',
+                        style: appCss.label12
+                            .textColor(Colors.white.withValues(alpha: 0.9))),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: Colors.white),
+            ],
+          ),
+        ),
       ),
     );
   }

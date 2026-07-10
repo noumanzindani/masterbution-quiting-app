@@ -11,6 +11,7 @@ import '../screens/emergency/breathing_screen.dart';
 import '../screens/emergency/crisis_resources_screen.dart';
 import '../screens/emergency/emergency_journal_screen.dart';
 import '../screens/emergency/grounding_screen.dart';
+import '../screens/emergency/emergency_mode_screen.dart';
 import '../screens/emergency/panic_screen.dart';
 import '../screens/emergency/urge_surf_screen.dart';
 import '../screens/habits/habits_screen.dart';
@@ -48,6 +49,7 @@ class AppRoute {
         _r.home: (_) => const HomeScreen(),
         // Emergency / crisis — all NO-AD zones (see AdPolicy.noAdRoutes).
         _r.panic: (_) => const PanicScreen(),
+        _r.emergencyMode: (_) => const EmergencyModeScreen(),
         _r.breathing: (_) => const BreathingScreen(),
         _r.urgeSurf: (_) => const UrgeSurfScreen(),
         _r.grounding: (_) => const GroundingScreen(),

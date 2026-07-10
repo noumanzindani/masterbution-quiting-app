@@ -8,6 +8,7 @@ import '../data/repositories/mood_repo.dart';
 import '../data/repositories/recovery_goal_repo.dart';
 import '../data/repositories/sleep_repo.dart';
 import '../data/repositories/tracker_event_repo.dart';
+import 'notification_scheduling.dart';
 
 /// One-shot async startup. Resolves the two things the app cannot run without —
 /// SharedPreferences and the Isar database — and assigns them to the globals in
@@ -34,6 +35,11 @@ class AppInit {
     // Initialize the ads SDK (test IDs). Non-fatal if it fails — the app must
     // run fine without ads, and the AdPolicy gate keeps ads off until ready.
     await adService.init();
+
+    // Initialize local notifications and (re)schedule reminders from the latest
+    // patterns. Both degrade to no-ops if unavailable or disabled.
+    await notificationService.init();
+    await NotificationScheduling.refresh();
 
     // Load the bundled content corpus (small; degrades to empty on failure).
     await contentService.preload();

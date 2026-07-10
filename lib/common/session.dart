@@ -47,6 +47,9 @@ class Session {
   // --- Privacy / misc ---
   final String discreetModeEnabled = 'discreetModeEnabled';
   final String notificationsEnabled = 'notificationsEnabled';
+  final String notifCheckInHour = 'notifCheckInHour'; // int 0–23, daily check-in
+  final String notifQuietStart = 'notifQuietStart'; // int 0–23, quiet-window start
+  final String notifQuietEnd = 'notifQuietEnd'; // int 0–23, quiet-window end
   final String panicContactId = 'panicContactId';
   final String contentPackVersion = 'contentPackVersion';
   final String coinsBalanceCache = 'coinsBalanceCache';

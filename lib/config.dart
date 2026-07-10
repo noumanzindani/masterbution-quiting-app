@@ -22,6 +22,7 @@ import 'data/repositories/tracker_event_repo.dart';
 import 'helper/navigation_class.dart';
 import 'packages_list.dart';
 import 'services/ad_service.dart';
+import 'services/notification_service.dart';
 
 // Re-exports so `import 'config.dart'` is enough for most files.
 export 'packages_list.dart';
@@ -67,6 +68,10 @@ late SleepRepo sleepRepo;
 /// The single ad gateway. Constructed eagerly (cheap); `init()` runs in
 /// [AppInit]. Every ad decision routes through its tested [AdPolicy].
 final AdService adService = AdService();
+
+/// Local-notification gateway. `init()` runs in [AppInit]; what to schedule is
+/// decided by the pure [SmartScheduler] and driven via [NotificationScheduling].
+final NotificationService notificationService = NotificationService();
 
 /// Bundled content corpus (articles, quotes, alternatives). Preloaded in
 /// [AppInit]; screens read from it synchronously.

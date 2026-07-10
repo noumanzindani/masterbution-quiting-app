@@ -72,6 +72,32 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
+          _SectionLabel('Reminders', theme: theme),
+          _SettingCard(
+            theme: theme,
+            children: [
+              _SwitchRow(
+                icon: Icons.notifications_none_rounded,
+                title: 'Smart reminders',
+                subtitle:
+                    'Gentle, private check-ins timed around your own patterns',
+                value: settings.notificationsEnabled,
+                theme: theme,
+                onChanged: (v) => settings.setNotificationsEnabled(v),
+              ),
+              if (settings.notificationsEnabled) ...[
+                _Divider(theme: theme),
+                _LinkRow(
+                  icon: Icons.schedule_rounded,
+                  title: 'Daily check-in time',
+                  trailing: _fmtHour(settings.checkInHour),
+                  theme: theme,
+                  onTap: () => _pickCheckInHour(context, settings),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 20),
           _SectionLabel('Support', theme: theme),
           _SettingCard(
             theme: theme,
@@ -102,6 +128,16 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _pickCheckInHour(
+      BuildContext context, SettingsProvider settings) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: settings.checkInHour, minute: 0),
+      helpText: 'Daily check-in time',
+    );
+    if (picked != null) await settings.setCheckInHour(picked.hour);
   }
 
   Future<void> _toggleLock(
@@ -230,17 +266,27 @@ class _SwitchRow extends StatelessWidget {
   }
 }
 
+/// 24h hour → a friendly "8:00 PM" label.
+String _fmtHour(int hour24) {
+  final period = hour24 < 12 ? 'AM' : 'PM';
+  var h = hour24 % 12;
+  if (h == 0) h = 12;
+  return '$h:00 $period';
+}
+
 class _LinkRow extends StatelessWidget {
   const _LinkRow({
     required this.icon,
     required this.title,
     required this.onTap,
     required this.theme,
+    this.trailing,
   });
   final IconData icon;
   final String title;
   final VoidCallback onTap;
   final AppTheme theme;
+  final String? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -256,6 +302,10 @@ class _LinkRow extends StatelessWidget {
               child: Text(title,
                   style: appCss.titleSemi16.textColor(theme.darkText)),
             ),
+            if (trailing != null) ...[
+              Text(trailing!, style: appCss.body14.textColor(theme.primary)),
+              const SizedBox(width: 6),
+            ],
             Icon(Icons.chevron_right_rounded, color: theme.lightText),
           ],
         ),

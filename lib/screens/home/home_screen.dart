@@ -2,6 +2,7 @@ import '../../config.dart';
 import '../../data/collections/recovery_goal.dart';
 import '../../data/enums.dart';
 import '../../providers/dashboard_provider.dart';
+import '../../services/emergency_flow.dart';
 import '../../services/streak_service.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
 import '../../widgets/primary_button.dart';
@@ -349,7 +350,7 @@ class _QuickActions extends StatelessWidget {
           icon: Icons.bolt_outlined,
           label: language(context, appFonts.logUrge),
           theme: theme,
-          onTap: () => showLogUrgeSheet(context),
+          onTap: () => _logUrge(context),
         ),
         _ActionTile(
           icon: Icons.check_circle_outline_rounded,
@@ -375,6 +376,17 @@ class _QuickActions extends StatelessWidget {
 
   /// After a slip is logged, gently open the relapse-reflection coach flow (a
   /// no-ad route). The flow reframes the lapse as learning, never failure.
+  Future<void> _logUrge(BuildContext context) async {
+    final intensity = await showLogUrgeSheet(context);
+    // A peak-intensity urge escalates into the guided emergency sequence — the
+    // same tested rule the panic hub uses (EmergencyFlow.shouldEscalate).
+    if (intensity != null &&
+        EmergencyFlow.shouldEscalate(intensity) &&
+        context.mounted) {
+      await Navigator.pushNamed(context, routeName.emergencyMode);
+    }
+  }
+
   Future<void> _slip(BuildContext context) async {
     final logged = await showSlipSheet(context);
     if (logged == true && context.mounted) {

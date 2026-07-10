@@ -7,9 +7,11 @@ import '../../widgets/primary_button.dart';
 
 /// Opens the "log an urge" sheet. Captures intensity, outcome and optional
 /// triggers/note, then writes a [TrackerEvent] via the dashboard provider.
-Future<void> showLogUrgeSheet(BuildContext context) {
+/// Resolves to the logged intensity (0–10) once saved, so the caller can offer
+/// emergency mode on a peak-intensity urge; `null` if dismissed without saving.
+Future<int?> showLogUrgeSheet(BuildContext context) {
   final provider = context.read<DashboardProvider>();
-  return _showSheet<void>(
+  return _showSheet<int>(
     context,
     ChangeNotifierProvider.value(
       value: provider,
@@ -127,7 +129,7 @@ class _LogUrgeSheetState extends State<_LogUrgeSheet> {
               : _noteController.text.trim(),
         );
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, _intensity);
   }
 
   @override
