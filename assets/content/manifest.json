@@ -11,6 +11,12 @@
     { "id": "brain", "label": "How the brain works" },
     { "id": "urges", "label": "Handling urges" },
     { "id": "relationships", "label": "Relationships & intimacy" },
-    { "id": "story", "label": "Success stories" }
+    { "id": "story", "label": "Success stories" },
+    { "id": "mindfulness", "label": "Mindfulness" },
+    { "id": "selfEsteem", "label": "Self-esteem" },
+    { "id": "relationship", "label": "Relationships" },
+    { "id": "anxiety", "label": "Anxiety" },
+    { "id": "depression", "label": "Mood & depression" },
+    { "id": "sleep", "label": "Sleep" }
   ]
 }

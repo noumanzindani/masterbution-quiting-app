@@ -50,5 +50,9 @@ class RouteName {
   // Rewards / gamification
   final String rewards = 'rewards';
 
+  // Wellbeing modules
+  final String wellbeing = 'wellbeing';
+  final String wellbeingModule = 'wellbeingModule';
+
   final String settings = 'settings';
 }

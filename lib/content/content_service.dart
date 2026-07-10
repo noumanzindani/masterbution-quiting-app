@@ -9,6 +9,7 @@ import 'program_models.dart';
 import 'quiz_models.dart';
 import 'reward_models.dart';
 import 'session_models.dart';
+import 'wellbeing_models.dart';
 
 /// Loads and caches the bundled JSON content corpus. Preloaded once at startup
 /// (in [AppInit]) since the corpus is small; every screen then reads
@@ -25,6 +26,9 @@ class ContentService {
   List<GuidedSession> _sessions = const [];
   List<ValueItem> _values = const [];
   List<Achievement> _achievements = const [];
+  List<WellbeingModule> _wellbeingModules = const [];
+  List<ContentArticle> _wellbeingArticles = const [];
+  List<GuidedSession> _wellbeingSessions = const [];
   Program? _dopamineReset;
   Map<String, CoachFlow> _coachFlows = const {};
   Map<String, String> _categoryLabels = const {};
@@ -51,6 +55,12 @@ class ContentService {
         'assets/content/values/values.json', ValueItem.fromJson);
     _achievements = await _loadList(
         'assets/content/rewards/achievements.json', Achievement.fromJson);
+    _wellbeingModules = await _loadList(
+        'assets/content/wellbeing/modules.json', WellbeingModule.fromJson);
+    _wellbeingArticles = await _loadList(
+        'assets/content/wellbeing/articles.json', ContentArticle.fromJson);
+    _wellbeingSessions = await _loadList(
+        'assets/content/wellbeing/sessions.json', GuidedSession.fromJson);
     _dopamineReset = await _loadObject(
         'assets/content/programs/dopamine_reset.json', Program.fromJson);
     _coachFlows = await _loadCoachFlows();
@@ -126,6 +136,31 @@ class ContentService {
   List<ValueItem> get values => _values;
 
   List<Achievement> get achievements => _achievements;
+
+  // --- Wellbeing modules ---
+
+  List<WellbeingModule> get wellbeingModules => _wellbeingModules;
+
+  WellbeingModule? wellbeingModuleById(String id) {
+    for (final m in _wellbeingModules) {
+      if (m.id == id) return m;
+    }
+    return null;
+  }
+
+  ContentArticle? wellbeingArticleById(String id) {
+    for (final a in _wellbeingArticles) {
+      if (a.id == id) return a;
+    }
+    return null;
+  }
+
+  GuidedSession? wellbeingSessionById(String id) {
+    for (final s in _wellbeingSessions) {
+      if (s.id == id) return s;
+    }
+    return null;
+  }
 
   Program? get dopamineReset => _dopamineReset;
 

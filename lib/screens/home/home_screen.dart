@@ -133,6 +133,14 @@ class _Content extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         _NavRow(
+          icon: Icons.spa_rounded,
+          title: 'Wellbeing',
+          subtitle: 'Mindfulness, mood, sleep, self-esteem, and more',
+          route: routeName.wellbeing,
+          theme: theme,
+        ),
+        const SizedBox(height: 10),
+        _NavRow(
           icon: Icons.menu_book_rounded,
           title: 'Learn',
           subtitle: 'Lessons, motivation, and things to do instead',

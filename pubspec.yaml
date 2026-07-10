@@ -89,6 +89,7 @@ flutter:
     - assets/content/values/
     - assets/content/coach/flows/
     - assets/content/rewards/
+    - assets/content/wellbeing/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

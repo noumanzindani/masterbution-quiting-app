@@ -1,0 +1,51 @@
+[
+  {
+    "id": "mindfulness",
+    "title": "Mindfulness",
+    "subtitle": "Come back to the present, one breath at a time",
+    "icon": "self_improvement",
+    "articles": ["mindfulness_urges"],
+    "sessions": ["body_scan", "loving_kindness"]
+  },
+  {
+    "id": "self_esteem",
+    "title": "Self-esteem",
+    "subtitle": "Rebuild a kinder, steadier relationship with yourself",
+    "icon": "favorite",
+    "articles": ["strengths", "affirmations"],
+    "sessions": ["self_compassion_break"]
+  },
+  {
+    "id": "relationship",
+    "title": "Relationships & intimacy",
+    "subtitle": "Real connection, communication, and consent",
+    "icon": "people",
+    "articles": ["intimacy", "communication", "consent"],
+    "sessions": []
+  },
+  {
+    "id": "anxiety",
+    "title": "Anxiety",
+    "subtitle": "Calm a racing mind and body",
+    "icon": "air",
+    "articles": ["understanding_anxiety"],
+    "sessions": ["pmr"]
+  },
+  {
+    "id": "depression",
+    "title": "Low mood",
+    "subtitle": "Gentle steps when everything feels heavy",
+    "icon": "wb_cloudy",
+    "disclaimer": "This module offers self-help ideas, not medical care. It is not a diagnosis or a substitute for a doctor or therapist. If you feel unsafe or think about harming yourself, please reach the crisis resources in the app or your local emergency number now.",
+    "articles": ["behavioral_activation"],
+    "sessions": ["gentle_activation"]
+  },
+  {
+    "id": "sleep",
+    "title": "Sleep",
+    "subtitle": "Wind down and rest more easily",
+    "icon": "bedtime",
+    "articles": ["sleep_hygiene"],
+    "sessions": ["wind_down"]
+  }
+]

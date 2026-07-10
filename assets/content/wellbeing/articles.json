@@ -1,0 +1,164 @@
+[
+  {
+    "id": "mindfulness_urges",
+    "title": "Riding the wave with mindfulness",
+    "category": "mindfulness",
+    "summary": "Urges rise, peak, and fall. Mindfulness is how you watch them pass.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "An urge feels permanent in the moment, but it isn't. Like a wave, it builds, crests, and falls — usually within 15 to 30 minutes if you don't feed it." },
+      { "type": "h", "text": "Notice instead of fight" },
+      { "type": "p", "text": "Fighting an urge often makes it louder. Mindfulness offers a different move: turn toward it with curiosity, name what's happening, and let it be there without acting." },
+      { "type": "list", "items": [
+        "Name it: \"This is an urge. It will pass.\"",
+        "Locate it in your body — chest, stomach, hands.",
+        "Breathe into that spot, slow and low.",
+        "Watch the intensity rise and fall like a wave."
+      ] },
+      { "type": "callout", "text": "You are not your urges. You're the person noticing them — and that person gets to choose what happens next." }
+    ]
+  },
+  {
+    "id": "strengths",
+    "title": "Your strengths are still there",
+    "category": "selfEsteem",
+    "summary": "Compulsive behaviour doesn't erase who you are.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Shame tells a simple, cruel story: that the behaviour is proof you're broken. It isn't. The qualities that make you you — kindness, humour, effort, care — didn't go anywhere." },
+      { "type": "h", "text": "Find the evidence" },
+      { "type": "p", "text": "Think of a time you showed up for someone, kept a promise, or did something hard. That person is still you. Recovery isn't becoming someone new — it's letting who you already are lead." },
+      { "type": "list", "items": [
+        "Name three strengths a friend would say you have.",
+        "Recall one recent moment each showed up.",
+        "Notice: the part of you reading this wants to grow. That's a strength too."
+      ] }
+    ]
+  },
+  {
+    "id": "affirmations",
+    "title": "Affirmations that don't feel fake",
+    "category": "selfEsteem",
+    "summary": "Skip the hollow slogans. Try honest, believable statements.",
+    "readMinutes": 2,
+    "blocks": [
+      { "type": "p", "text": "\"I am amazing\" can feel like a lie when you're low — and your brain rejects lies. Effective affirmations are believable and process-focused, not grandiose." },
+      { "type": "list", "items": [
+        "\"I'm learning, and slips are part of learning.\"",
+        "\"I can do one small hard thing right now.\"",
+        "\"I've gotten through hard moments before.\"",
+        "\"I'm allowed to be a work in progress.\""
+      ] },
+      { "type": "callout", "text": "Say the one that feels most true today — out loud if you can. Repeat it when the harsh inner voice gets loud." }
+    ]
+  },
+  {
+    "id": "intimacy",
+    "title": "Real intimacy vs. the counterfeit",
+    "category": "relationship",
+    "summary": "Why porn can leave you lonelier, and what genuine closeness needs.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Compulsive use often promises connection but delivers isolation. Real intimacy is built on things a screen can't give: being known, being vulnerable, and being present with another person." },
+      { "type": "h", "text": "What real closeness is made of" },
+      { "type": "list", "items": [
+        "Presence — actually being here, not half-elsewhere.",
+        "Vulnerability — letting yourself be seen, flaws and all.",
+        "Reciprocity — two people, both giving and receiving.",
+        "Time — closeness grows slowly and can't be rushed."
+      ] },
+      { "type": "p", "text": "Rebuilding intimacy can feel awkward at first. That awkwardness is normal — it's the feeling of a real skill coming back online." }
+    ]
+  },
+  {
+    "id": "communication",
+    "title": "Saying what you need",
+    "category": "relationship",
+    "summary": "Simple tools for honest, non-blaming conversations.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Most conflict isn't about the topic — it's about feeling unheard. A few small shifts make it far more likely you'll actually be understood." },
+      { "type": "h", "text": "Try \"I\" statements" },
+      { "type": "p", "text": "\"You never listen\" invites defence. \"I feel unheard when I'm interrupted\" invites a response. Name the feeling and the specific situation, not the character flaw." },
+      { "type": "list", "items": [
+        "I feel ___ (emotion)",
+        "when ___ (specific situation, not \"you always\")",
+        "and I'd appreciate ___ (a clear, doable request)."
+      ] },
+      { "type": "callout", "text": "You can't control how someone responds — only how clearly and kindly you show up. That's enough." }
+    ]
+  },
+  {
+    "id": "consent",
+    "title": "Consent, respect, and connection",
+    "category": "relationship",
+    "summary": "Consent isn't a hurdle — it's the ground healthy intimacy stands on.",
+    "readMinutes": 2,
+    "blocks": [
+      { "type": "p", "text": "Consent is an ongoing, enthusiastic, freely-given yes — not the absence of a no. It can be withdrawn at any time, by anyone, for any reason." },
+      { "type": "list", "items": [
+        "Freely given — no pressure, guilt, or intoxication.",
+        "Reversible — anyone can change their mind, anytime.",
+        "Informed and specific — yes to one thing isn't yes to all.",
+        "Enthusiastic — look for a real yes, not a reluctant one."
+      ] },
+      { "type": "p", "text": "Treating consent as central isn't a mood-killer — it builds the trust and safety that real closeness needs." }
+    ]
+  },
+  {
+    "id": "understanding_anxiety",
+    "title": "What anxiety is really doing",
+    "category": "anxiety",
+    "summary": "Your alarm system is trying to protect you — even when it's wrong.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Anxiety is your body's alarm system firing. It's uncomfortable, but it isn't dangerous — it's a false alarm, not a fire. Understanding that takes some of its power away." },
+      { "type": "h", "text": "The link with urges" },
+      { "type": "p", "text": "Anxiety is a common trigger: the discomfort makes the quick escape of a compulsive behaviour tempting. Learning to soothe the alarm directly removes the reason to escape." },
+      { "type": "list", "items": [
+        "Slow exhale — longer out-breath than in-breath calms the body.",
+        "Ground with 5-4-3-2-1 (see the emergency tools).",
+        "Release physical tension with the muscle-relaxation session here.",
+        "Remind yourself: \"This is uncomfortable, not dangerous.\""
+      ] }
+    ]
+  },
+  {
+    "id": "behavioral_activation",
+    "title": "When you can't feel motivated, act first",
+    "category": "depression",
+    "summary": "In low mood, action comes before motivation — not after.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Low mood whispers \"wait until you feel like it.\" But motivation usually follows action, not the other way around. This is the core idea behind behavioural activation, a well-studied approach for low mood." },
+      { "type": "h", "text": "Schedule small, doable things" },
+      { "type": "p", "text": "Pick one small activity that used to give you a sense of pleasure or accomplishment, and do it — regardless of how you feel. Then notice your mood before and after." },
+      { "type": "list", "items": [
+        "Make it tiny: a 10-minute walk, one dish washed, a text to a friend.",
+        "Schedule it for a specific time today.",
+        "Rate your mood 0–10 before and after — evidence beats the whisper.",
+        "Stack small wins. They add up faster than they feel like they do."
+      ] },
+      { "type": "callout", "text": "If low mood is heavy, persistent, or you're having thoughts of harming yourself, please talk to a doctor or reach the crisis resources in this app. You deserve real support." }
+    ]
+  },
+  {
+    "id": "sleep_hygiene",
+    "title": "Small changes for better sleep",
+    "category": "sleep",
+    "summary": "Sleep and recovery feed each other. A few habits move the needle.",
+    "readMinutes": 3,
+    "blocks": [
+      { "type": "p", "text": "Poor sleep drains willpower and worsens mood — both make urges harder to ride out. Late-night scrolling is also a common trigger, so protecting your sleep protects your recovery." },
+      { "type": "h", "text": "Wind-down basics" },
+      { "type": "list", "items": [
+        "Keep a consistent wake time — even on weekends.",
+        "No screens in bed; charge your phone across the room.",
+        "Dim the lights an hour before sleep.",
+        "Cut caffeine after early afternoon.",
+        "If you can't sleep after 20 minutes, get up and do something calm."
+      ] },
+      { "type": "callout", "text": "Try the wind-down session here as part of your bedtime routine — the same practice each night trains your body to expect rest." }
+    ]
+  }
+]

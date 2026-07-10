@@ -6,21 +6,22 @@ enabled resuming across sessions lived **outside the repo** (`~/.claude/…/memo
 travel with a `git clone`. This file replaces that.
 
 - **Last updated:** 2026-07-10
-- **Where we are:** Phases 0–4 core complete. **Phase 5 in progress — increment 5.1 (gamification/rewards)
-  built**: achievements, coins, rewarded ads, unlockable accent themes. `flutter analyze` clean, **92 unit
-  tests green**, app boots on sim.
-- **What's next:** the rest of Phase 5 — the wellbeing modules (mindfulness, self-esteem, relationship,
-  anxiety, depression-with-disclaimer, sleep tracking). Mostly JSON content reusing existing renderers. See §11.
+- **Where we are:** Phases 0–4 core complete. **Phase 5 nearly done** — 5.1 gamification/rewards + 5.2 the six
+  wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood, sleep) are built. `flutter
+  analyze` clean, **97 unit tests green**, app boots on sim.
+- **What's next:** the ONE remaining Phase 5 piece — **sleep *tracking*** (a `SleepEntry` Isar collection +
+  a log screen + rule-based tips; needs `build_runner`). Then **Phase 6** (smart notifications + emergency
+  mode). See §11.
 
 ---
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 92 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 97 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
 2. Read §7 (feature map) to see what exists, and §8 (Phase 4/5 status + what remains) for the next build.
-3. Phase 4 + increment 5.1 (rewards) are done; continue Phase 5's wellbeing modules (§8/§11). Keep the
-   clinical guardrails in §6 sacred.
+3. Phase 4 + Phase 5 (rewards + wellbeing modules) are done bar sleep-tracking; do that (§8) or start Phase 6
+   (§11). Keep the clinical guardrails in §6 sacred.
 
 Everything is on-device. No backend, no Firebase, no AI/LLM. Monetized only via AdMob (test IDs now).
 
@@ -48,7 +49,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 92 unit tests, must be green
+flutter test                    # 97 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -221,6 +222,17 @@ atLeast`), validated by `test/achievements_content_test.dart` (every metric must
   actually fires. `RewardsScreen` (dashboard **"Milestones & rewards"** row): coin header, achievements list,
   accent shop.
 
+### F. Wellbeing modules (Phase 5, increment 5.2)
+Six modules — **mindfulness, self-esteem, relationships, anxiety, low-mood, sleep** — each grouping a few
+articles + guided sessions. **Pure content + reuse:** a `WellbeingModule` (`wellbeing/modules.json`) just
+lists article/session ids; `WellbeingModuleScreen` resolves them and opens the **existing** `ArticleScreen`
+and `SessionPlayerScreen` — so a new module is JSON only. Content lives in separate files
+(`wellbeing/articles.json`, `wellbeing/sessions.json`) with their own `ContentService` lookups, so it does
+**not** leak into the Academy/Sessions library. The **low-mood module carries a prominent disclaimer**
+("self-help, not medical care") rendered atop the module. Entry: dashboard **"Wellbeing"** row →
+`WellbeingHubScreen`. Validated by `test/wellbeing_content_test.dart` (every referenced id resolves — no
+module tile can open an empty screen).
+
 ---
 
 ## 8. Phase 4 & 5 — status & what remains
@@ -235,21 +247,22 @@ crisis flow). `action` tokens recognised: `saveReflection:relapse`, `saveReflect
 *Optional polish:* an explicit relapse-analysis→plan-adjustment step (today the coping plan is captured as a
 journal entry); more coach flows.
 
-### Phase 5 (gamification + wellbeing) — increment 5.1 done, wellbeing modules remain
+### Phase 5 (gamification + wellbeing) — 5.1 + 5.2 done, only sleep-tracking remains
 
 **5.1 gamification/rewards — DONE (see §7.E):** `RewardEngine` (TDD), achievements JSON, coins, rewarded ads,
-unlockable accent themes, `RewardsScreen`. 92 tests green; app boots on sim (dashboard screenshot-verified).
-*GUI click-through still blocked this session by macOS Automation permissions — logic covered instead by the
-engine + content-validation tests.*
+unlockable accent themes, `RewardsScreen`.
 
-**Remaining Phase 5 — the wellbeing modules (next increments):** mindfulness (body scan, breathing,
-loving-kindness), self-esteem (strengths, affirmations, self-compassion), relationship (intimacy,
-communication, consent), anxiety (breathing/grounding/PMR), **depression support (behavioural activation +
-activity scheduling — MUST carry the prominent "not a substitute for professional care" disclaimer)**, and
-**sleep tracking + rule-based tips** (this one needs a new `SleepEntry` Isar collection → run `build_runner`).
-Most of the rest is **JSON content reusing the existing `GuidedSession` player / `ContentBlocks` article
-renderer + a new "Wellbeing" hub** — little new Dart. Author the JSON, register it in `pubspec.yaml` +
-`ContentService.preload()`, add hub tiles.
+**5.2 wellbeing modules — DONE (see §7.F):** six modules (mindfulness, self-esteem, relationships, anxiety,
+low-mood-with-disclaimer, sleep-hygiene) as pure content over the reused article reader + session player.
+97 tests green; app boots on sim. *GUI click-through still blocked this session by macOS Automation
+permissions — logic covered by the engine + content-validation tests.*
+
+**Remaining Phase 5 — sleep TRACKING (the one data feature left):** the sleep module currently offers
+recommendations only (a hygiene article + wind-down session). To finish it, add a **`SleepEntry` Isar
+collection** (bedtime, wake, quality/rating), register its schema in `isar_service.dart`, run `build_runner`,
+add a `SleepRepo`, a simple nightly log screen, and a small **rule-based tips engine** (TDD it — e.g. "your
+average is under 6h → try an earlier wind-down"). Surface it from the sleep wellbeing module. This is the last
+Phase-5 item before Phase 6.
 
 ---
 
@@ -306,8 +319,9 @@ all 35 requested features to where each honestly lives (✅ local / 🔶 on-devi
 - **3 Content depth** ✅ — CBT, academy+quizzes, guided sessions, dopamine reset, motivation, alternatives, values.
 - **4 Interactive guidance** ✅ core — rule-based coach engine, relapse-reflection flow, daily reflection,
   daily planner. (Optional polish remains: explicit plan-adjustment step, more flows — see §8.)
-- **5 Gamification + wellbeing** 🔨 IN PROGRESS — ✅ rewards (badges/coins via **rewarded ads**, accent themes);
-  ⏭ still to do: mindfulness, self-esteem, relationship, anxiety, depression (with disclaimer), sleep.
+- **5 Gamification + wellbeing** 🔨 NEARLY DONE — ✅ rewards (badges/coins via **rewarded ads**, accent themes);
+  ✅ six wellbeing modules (mindfulness, self-esteem, relationships, anxiety, low-mood-with-disclaimer,
+  sleep-hygiene); ⏭ only **sleep tracking** (the `SleepEntry` data feature) remains.
 - **6 Proactive** — rule-based adaptive smart notifications (seeded by Phase-2 high-risk buckets), emergency
   recovery mode (urge > 9/10 sequenced flow), pattern→intervention surfacing.
 - **7 Privacy/export + social + i18n** — encrypted export/import + PDF/share, sharing controls, discreet

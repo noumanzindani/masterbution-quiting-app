@@ -1,0 +1,95 @@
+[
+  {
+    "id": "body_scan",
+    "title": "Body scan",
+    "intro": "A slow tour through the body to settle a restless mind.",
+    "type": "mindfulness",
+    "minutes": 8,
+    "blocks": [
+      { "text": "Find a comfortable position, sitting or lying down. Let your eyes close, or soften your gaze downward." },
+      { "text": "Take three slow breaths. With each out-breath, let your body get a little heavier.", "pause": true },
+      { "text": "Bring your attention to the top of your head. Just notice any sensation there — warmth, tingling, or nothing at all." },
+      { "text": "Slowly move your attention down — your face, your jaw. Let your jaw unclench.", "pause": true },
+      { "text": "Down through your shoulders and arms, all the way to your fingertips. There's nothing to fix. Only notice." },
+      { "text": "Into your chest and stomach, rising and falling with the breath.", "pause": true },
+      { "text": "Down through your hips, your legs, to the soles of your feet. Notice the whole body, held by the floor." },
+      { "text": "Rest here for a moment as a whole. When you're ready, open your eyes and carry this steadiness with you." }
+    ]
+  },
+  {
+    "id": "loving_kindness",
+    "title": "Loving-kindness",
+    "intro": "Warm wishes for yourself and others — an antidote to shame.",
+    "type": "compassion",
+    "minutes": 6,
+    "blocks": [
+      { "text": "Settle comfortably and take a few easy breaths. Place a hand on your heart if that feels okay." },
+      { "text": "Silently offer these words to yourself: May I be safe. May I be well. May I be at peace.", "pause": true },
+      { "text": "Notice how it feels to wish yourself well — even if part of you resists. Let that be okay." },
+      { "text": "Now picture someone you care about. Offer them the same: May you be safe. May you be well. May you be at peace.", "pause": true },
+      { "text": "Widen it to someone you find difficult, then to all people trying, like you, to be well." },
+      { "text": "Return to yourself once more: May I be kind to myself, especially when I struggle. Rest here a moment before you finish." }
+    ]
+  },
+  {
+    "id": "self_compassion_break",
+    "title": "Self-compassion break",
+    "intro": "Three steps to meet a hard moment with kindness.",
+    "type": "compassion",
+    "minutes": 5,
+    "blocks": [
+      { "text": "Bring to mind something that's weighing on you right now. Feel where it sits in your body." },
+      { "text": "First, acknowledge it: \"This is a moment of struggle.\" Naming pain is not weakness — it's honesty.", "pause": true },
+      { "text": "Second, remember you're not alone: \"Struggle is part of being human. Others feel this too.\"" },
+      { "text": "Third, offer yourself kindness. Place a hand on your heart and say: \"May I be gentle with myself right now.\"", "pause": true },
+      { "text": "You'd offer this to a friend without hesitation. You're allowed to offer it to yourself. Take one more slow breath and return." }
+    ]
+  },
+  {
+    "id": "pmr",
+    "title": "Muscle relaxation",
+    "intro": "Tense and release each muscle group to drain physical anxiety.",
+    "type": "mindfulness",
+    "minutes": 10,
+    "blocks": [
+      { "text": "Sit or lie down somewhere you won't be disturbed. We'll gently tense, then release, each part of the body." },
+      { "text": "Start with your hands. Clench both fists tight for five seconds… and let go. Notice the difference.", "pause": true },
+      { "text": "Now your arms — tense them toward your shoulders… hold… and release." },
+      { "text": "Your shoulders — lift them up toward your ears… hold… and let them drop.", "pause": true },
+      { "text": "Your face — scrunch it tight… hold… and soften everything." },
+      { "text": "Your stomach — tighten the muscles… hold… and release.", "pause": true },
+      { "text": "Your legs — press your feet into the floor and tense… hold… and let go." },
+      { "text": "Now let your whole body be loose and heavy. Notice the calm that follows tension leaving. Rest here, then finish when ready." }
+    ]
+  },
+  {
+    "id": "gentle_activation",
+    "title": "One small step",
+    "intro": "A short practice to move from stuck toward one doable action.",
+    "type": "positivePsych",
+    "minutes": 6,
+    "blocks": [
+      { "text": "Low mood makes everything feel heavy and pointless. We're not going to fight that feeling — just take one tiny step alongside it." },
+      { "text": "Take a slow breath. Notice you showed up here. That already counts.", "pause": true },
+      { "text": "Think of one small thing that once gave you a flicker of pleasure or accomplishment. Small is good — the smaller the better." },
+      { "text": "Picture yourself doing just the first 10 minutes of it. Not the whole thing. Just the start.", "pause": true },
+      { "text": "Notice your mood right now, 0 to 10. Hold that number lightly." },
+      { "text": "When this ends, go do that first small step — before you feel ready. Then check your mood again. Let the evidence, not the whisper, decide what's true." }
+    ]
+  },
+  {
+    "id": "wind_down",
+    "title": "Wind down for sleep",
+    "intro": "A calming practice to help your body shift toward rest.",
+    "type": "mindfulness",
+    "minutes": 7,
+    "blocks": [
+      { "text": "Lie down comfortably. This is the end of the day — nothing left to do but rest." },
+      { "text": "Breathe in for a count of four… and out for a count of six. The long out-breath tells your body it's safe to slow down.", "pause": true },
+      { "text": "Let the day go. If thoughts about tomorrow arrive, imagine setting them on a shelf — they'll be there in the morning." },
+      { "text": "Feel the weight of your body sinking into the bed, fully supported.", "pause": true },
+      { "text": "Soften your face, your shoulders, your hands. Let each breath out release a little more." },
+      { "text": "There's nothing to achieve here — not even sleep. Just rest. Let the breath carry you gently down." }
+    ]
+  }
+]
