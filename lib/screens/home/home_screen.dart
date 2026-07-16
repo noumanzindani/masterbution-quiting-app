@@ -2,6 +2,7 @@ import '../../config.dart';
 import '../../data/collections/recovery_goal.dart';
 import '../../data/enums.dart';
 import '../../providers/dashboard_provider.dart';
+import '../../services/coping_plan_engine.dart';
 import '../../services/emergency_flow.dart';
 import '../../services/streak_service.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
@@ -256,14 +257,23 @@ class _QuickActions extends StatelessWidget {
   /// After a slip is logged, gently open the relapse-reflection coach flow (a
   /// no-ad route). The flow reframes the lapse as learning, never failure.
   Future<void> _logUrge(BuildContext context) async {
-    final intensity = await showLogUrgeSheet(context);
+    final result = await showLogUrgeSheet(context);
     // A peak-intensity urge escalates into the guided emergency sequence — the
-    // same tested rule the panic hub uses (EmergencyFlow.shouldEscalate).
-    if (intensity != null &&
-        EmergencyFlow.shouldEscalate(intensity) &&
-        context.mounted) {
-      await Navigator.pushNamed(context, routeName.emergencyMode);
+    // same tested rule the panic hub uses (EmergencyFlow.shouldEscalate). The
+    // matched trigger rides along so the reflect step can name the plan.
+    if (result == null ||
+        !EmergencyFlow.shouldEscalate(result.intensity) ||
+        !context.mounted) {
+      return;
     }
+    final active = await copingPlanRepo.active();
+    final plan = CopingPlanEngine.matchFor(result.triggers, active);
+    if (!context.mounted) return;
+    await Navigator.pushNamed(
+      context,
+      routeName.emergencyMode,
+      arguments: plan?.trigger,
+    );
   }
 
   Future<void> _slip(BuildContext context) async {

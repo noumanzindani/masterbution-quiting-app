@@ -7,13 +7,22 @@ import '../../services/coping_plan_engine.dart';
 import '../../widgets/option_scale.dart';
 import '../../widgets/primary_button.dart';
 
+/// What the urge sheet collected. The triggers ride along so the caller can
+/// match a standing coping plan without re-asking.
+class UrgeLogResult {
+  const UrgeLogResult({required this.intensity, required this.triggers});
+
+  final int intensity;
+  final List<TriggerType> triggers;
+}
+
 /// Opens the "log an urge" sheet. Captures intensity, outcome and optional
 /// triggers/note, then writes a [TrackerEvent] via the dashboard provider.
-/// Resolves to the logged intensity (0–10) once saved, so the caller can offer
-/// emergency mode on a peak-intensity urge; `null` if dismissed without saving.
-Future<int?> showLogUrgeSheet(BuildContext context) {
+/// Resolves once saved, so the caller can offer emergency mode on a
+/// peak-intensity urge and name the trigger there; `null` if dismissed.
+Future<UrgeLogResult?> showLogUrgeSheet(BuildContext context) {
   final provider = context.read<DashboardProvider>();
-  return _showSheet<int>(
+  return _showSheet<UrgeLogResult>(
     context,
     ChangeNotifierProvider.value(
       value: provider,
@@ -144,7 +153,10 @@ class _LogUrgeSheetState extends State<_LogUrgeSheet> {
               : _noteController.text.trim(),
         );
     if (!mounted) return;
-    Navigator.pop(context, _intensity);
+    Navigator.pop(
+      context,
+      UrgeLogResult(intensity: _intensity, triggers: _triggers.toList()),
+    );
   }
 
   @override
