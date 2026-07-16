@@ -27,6 +27,8 @@ String triggerLabel(TriggerType t) {
       return 'Alcohol';
     case TriggerType.socialMedia:
       return 'Social media';
+    case TriggerType.tiredness:
+      return 'Tiredness';
   }
 }
 
@@ -36,6 +38,7 @@ const List<TriggerType> quickTriggers = [
   TriggerType.stress,
   TriggerType.boredom,
   TriggerType.loneliness,
+  TriggerType.tiredness,
   TriggerType.anger,
   TriggerType.time,
   TriggerType.device,
