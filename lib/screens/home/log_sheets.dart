@@ -1,7 +1,9 @@
 import '../../config.dart';
+import '../../data/collections/coping_plan.dart';
 import '../../data/enums.dart';
 import '../../data/trigger_labels.dart';
 import '../../providers/dashboard_provider.dart';
+import '../../services/coping_plan_engine.dart';
 import '../../widgets/option_scale.dart';
 import '../../widgets/primary_button.dart';
 
@@ -104,6 +106,7 @@ class _LogUrgeSheetState extends State<_LogUrgeSheet> {
   final Set<TriggerType> _triggers = {};
   final _noteController = TextEditingController();
   bool _saving = false;
+  List<CopingPlan> _activePlans = const [];
 
   static const _outcomeOptions = <(Outcome, String)>[
     (Outcome.resisted, 'I resisted'),
@@ -111,6 +114,18 @@ class _LogUrgeSheetState extends State<_LogUrgeSheet> {
     (Outcome.delayed, 'I delayed it'),
     (Outcome.lapse, 'I acted on it'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlans();
+  }
+
+  Future<void> _loadPlans() async {
+    final plans = await copingPlanRepo.active();
+    if (!mounted) return;
+    setState(() => _activePlans = plans);
+  }
 
   @override
   void dispose() {
@@ -179,6 +194,14 @@ class _LogUrgeSheetState extends State<_LogUrgeSheet> {
           ],
         ),
         const SizedBox(height: 20),
+        _PlanReminder(
+          plan: CopingPlanEngine.cardFor(
+            outcome: _outcome,
+            triggers: _triggers.toList(),
+            active: _activePlans,
+          ),
+          theme: theme,
+        ),
         _NoteField(controller: _noteController, theme: theme),
         const SizedBox(height: 24),
         PrimaryButton(
@@ -327,6 +350,42 @@ class _MultiChip extends StatelessWidget {
                 .textColor(selected ? Colors.white : theme.darkText),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The standing coping plan for whatever trigger was just tagged — the whole
+/// point of writing one down. Renders nothing when there's no match, and the
+/// engine (not this widget) decides to stay quiet after a lapse.
+class _PlanReminder extends StatelessWidget {
+  const _PlanReminder({required this.plan, required this.theme});
+
+  final CopingPlan? plan;
+  final AppTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = plan;
+    if (p == null) return const SizedBox.shrink();
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.primarySoft,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.shield_moon_rounded, color: theme.primary, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Your plan for ${triggerLabel(p.trigger).toLowerCase()}: ${p.strategy}',
+              style: appCss.medium14.textColor(theme.primary),
+            ),
+          ),
+        ],
       ),
     );
   }
