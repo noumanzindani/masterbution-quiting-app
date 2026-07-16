@@ -29,6 +29,7 @@ import '../screens/learn/values_screen.dart';
 import '../screens/lock/lock_screen.dart';
 import '../screens/mood/mood_journal_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/plan/coping_plan_screen.dart';
 import '../screens/rewards/rewards_screen.dart';
 import '../screens/settings/backup_screen.dart';
 import '../screens/social/accountability_screen.dart';
@@ -84,6 +85,7 @@ class AppRoute {
         _r.coachHub: (_) => const CoachHubScreen(),
         _r.coach: (_) => const CoachFlowScreen(),
         _r.dailyPlanner: (_) => const DailyPlannerScreen(),
+        _r.copingPlan: (_) => const CopingPlanScreen(),
         _r.rewards: (_) => const RewardsScreen(),
         _r.wellbeing: (_) => const WellbeingHubScreen(),
         _r.wellbeingModule: (_) => const WellbeingModuleScreen(),

@@ -7,7 +7,7 @@ import 'package:momentum/routes/route_name.dart';
 import 'package:momentum/screens/shell/tools_tab_screen.dart';
 
 void main() {
-  testWidgets('lists all six tool destinations and navigates on tap',
+  testWidgets('lists all seven tool destinations and navigates on tap',
       (tester) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
@@ -21,6 +21,7 @@ void main() {
           routes: {
             r.coachHub: (_) => const Scaffold(body: Text('coach hub')),
             r.dailyPlanner: (_) => const Scaffold(body: Text('planner')),
+            r.copingPlan: (_) => const Scaffold(body: Text('plans')),
             r.wellbeing: (_) => const Scaffold(body: Text('wellbeing')),
             r.sleepLog: (_) => const Scaffold(body: Text('sleep')),
             r.rewards: (_) => const Scaffold(body: Text('rewards')),
@@ -32,6 +33,7 @@ void main() {
 
     expect(find.text('Coach & check-ins'), findsOneWidget);
     expect(find.text('Daily planner'), findsOneWidget);
+    expect(find.text('My coping plans'), findsOneWidget);
     expect(find.text('Wellbeing'), findsOneWidget);
     expect(find.text('Sleep'), findsOneWidget);
     expect(find.text('Milestones & rewards'), findsOneWidget);

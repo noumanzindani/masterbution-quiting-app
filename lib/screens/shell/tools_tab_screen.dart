@@ -31,6 +31,14 @@ class ToolsTabBody extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         NavRow(
+          icon: Icons.shield_moon_rounded,
+          title: 'My coping plans',
+          subtitle: 'What you decided to try when a trigger shows up',
+          route: routeName.copingPlan,
+          theme: theme,
+        ),
+        const SizedBox(height: 10),
+        NavRow(
           icon: Icons.spa_rounded,
           title: 'Wellbeing',
           subtitle: 'Mindfulness, self-esteem, relationships, and more',
