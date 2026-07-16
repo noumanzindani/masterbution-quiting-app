@@ -1,7 +1,11 @@
 import '../../config.dart';
 import '../../content/coach_models.dart';
 import '../../data/enums.dart';
+import '../../data/trigger_labels.dart';
 import '../../services/coach_runner.dart';
+import '../../services/coping_plan_engine.dart';
+import '../../services/daily_plan_store.dart';
+import '../../services/reflection_composer.dart';
 import '../../widgets/primary_button.dart';
 
 /// The ONE screen that renders any rule-based coach flow. It reads a flow id
@@ -27,19 +31,6 @@ class _CoachFlowScreenState extends State<CoachFlowScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
   bool _init = false;
-
-  /// Human labels for the collected variables, so a saved reflection reads
-  /// naturally instead of as raw keys.
-  static const _labels = {
-    'feeling': 'Feeling',
-    'trigger': 'Trigger',
-    'need': 'What I hoped it would give me',
-    'plan': "Next time I'll try",
-    'mood': 'Today felt',
-    'win': 'Something that went okay',
-    'hard': 'What felt hard',
-    'intention': "Tomorrow's intention",
-  };
 
   @override
   void didChangeDependencies() {
@@ -76,8 +67,12 @@ class _CoachFlowScreenState extends State<CoachFlowScreen> {
     setState(() => _state = s);
     final node = CoachRunner.current(_flow!, s);
     if (node.type == 'action') {
-      await _runAction(node);
+      final said = await _runAction(node);
       if (!mounted) return;
+      if (said != null) {
+        setState(() => _turns.add(_Turn.coach(said)));
+        _scrollToEnd();
+      }
       await _advanceTo(CoachRunner.proceed(_flow!, s));
       return;
     }
@@ -102,20 +97,37 @@ class _CoachFlowScreenState extends State<CoachFlowScreen> {
 
   // --- Action nodes (the only place side-effects happen) --------------------
 
-  Future<void> _runAction(CoachNode node) async {
+  /// Runs a node's `action` token. Returns text for the coach to say next, or
+  /// null to stay quiet. Never throws: a storage failure must not derail a
+  /// conversation someone is having at a raw moment, so it degrades to silence
+  /// the way AdService and NotificationService do.
+  Future<String?> _runAction(CoachNode node) async {
     final a = node.action ?? '';
-    if (a.startsWith('saveReflection')) {
-      await _saveReflection(a);
-    } else if (a.startsWith('navigate:')) {
-      await Navigator.pushNamed(context, a.substring('navigate:'.length));
+    try {
+      if (a.startsWith('saveReflection')) {
+        await _saveReflection(a);
+        return null;
+      }
+      if (a == 'adjustPlan') {
+        return await _adjustPlan();
+      }
+      if (a == 'addTodayIntention') {
+        return await _addTodayIntention();
+      }
+      if (a.startsWith('navigate:')) {
+        await Navigator.pushNamed(context, a.substring('navigate:'.length));
+      }
+    } catch (_) {
+      return null;
     }
+    return null;
   }
 
   Future<void> _saveReflection(String token) async {
     final kind = token.endsWith(':relapse')
         ? JournalKind.relapseReflection
         : JournalKind.dailyReflection;
-    final text = _composeReflection(_state.vars);
+    final text = ReflectionComposer.compose(_state.vars);
     if (text.isEmpty) return;
     await journalRepo.add(
       kind: kind,
@@ -124,16 +136,40 @@ class _CoachFlowScreenState extends State<CoachFlowScreen> {
     );
   }
 
-  /// Turn collected answers into a readable, labelled reflection body. Empty
-  /// answers are skipped so a mostly-skipped daily check-in still reads cleanly.
-  String _composeReflection(Map<String, String> vars) {
-    final lines = <String>[];
-    for (final entry in vars.entries) {
-      final value = entry.value.trim();
-      if (value.isEmpty) continue;
-      lines.add('${_labels[entry.key] ?? entry.key}: $value');
+  /// Records the if-then coping plan this reflection just produced, and says
+  /// what changed — a plan that quietly rewrites itself teaches nothing.
+  Future<String?> _adjustPlan() async {
+    final active = await copingPlanRepo.active();
+    final revision = CopingPlanEngine.revise(vars: _state.vars, active: active);
+    if (revision.action == PlanAction.none) return null;
+
+    // Grab the outgoing strategy BEFORE applying, so the coach can name what
+    // it replaced.
+    String? previous;
+    for (final p in active) {
+      if (p.id == revision.supersededId) previous = p.strategy;
     }
-    return lines.join('\n');
+
+    await copingPlanRepo.apply(revision);
+
+    final trigger = triggerLabel(revision.trigger!).toLowerCase();
+    return switch (revision.action) {
+      PlanAction.create =>
+        'Saved — when $trigger shows up, your plan is: ${revision.strategy}.',
+      PlanAction.supersede =>
+        'Updated your plan for $trigger — ${revision.strategy} replaces '
+            '${previous ?? 'what was there before'}.',
+      PlanAction.reaffirm =>
+        "That's still your plan for $trigger. Knowing what works is its own kind of progress.",
+      PlanAction.none => null,
+    };
+  }
+
+  Future<String?> _addTodayIntention() async {
+    final strategy = (_state.vars['plan'] ?? '').trim();
+    if (strategy.isEmpty) return null;
+    await DailyPlanStore.addIntention('Practice: $strategy');
+    return "It's on today's plan.";
   }
 
   void _scrollToEnd() {
