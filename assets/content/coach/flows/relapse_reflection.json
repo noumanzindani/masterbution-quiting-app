@@ -31,12 +31,12 @@
       "type": "choice",
       "text": "Looking back — what was going on just before?",
       "choices": [
-        { "label": "I was bored", "next": "need", "effect": { "trigger": "Boredom" } },
-        { "label": "I felt stressed or anxious", "next": "need", "effect": { "trigger": "Stress" } },
-        { "label": "I was lonely", "next": "need", "effect": { "trigger": "Loneliness" } },
-        { "label": "I was tired or drained", "next": "need", "effect": { "trigger": "Tiredness" } },
-        { "label": "I was scrolling / online", "next": "need", "effect": { "trigger": "Scrolling" } },
-        { "label": "Something else", "next": "need", "effect": { "trigger": "Something else" } }
+        { "label": "I was bored", "next": "need", "effect": { "trigger": "boredom" } },
+        { "label": "I felt stressed or anxious", "next": "need", "effect": { "trigger": "stress" } },
+        { "label": "I was lonely", "next": "need", "effect": { "trigger": "loneliness" } },
+        { "label": "I was tired or drained", "next": "need", "effect": { "trigger": "tiredness" } },
+        { "label": "I was scrolling / online", "next": "need", "effect": { "trigger": "socialMedia" } },
+        { "label": "Something else", "next": "need" }
       ]
     },
     {
@@ -68,6 +68,29 @@
       "type": "action",
       "text": "Saving what you learned…",
       "action": "saveReflection:relapse",
+      "next": "adjust"
+    },
+    {
+      "id": "adjust",
+      "type": "action",
+      "text": "Updating your plan…",
+      "action": "adjustPlan",
+      "next": "echo"
+    },
+    {
+      "id": "echo",
+      "type": "choice",
+      "text": "Want to put a practice run on today's plan? Rehearsing it while things are calm is what makes it there when they aren't.",
+      "choices": [
+        { "label": "Yes, add it to today", "next": "echo_add" },
+        { "label": "Not today", "next": "offer" }
+      ]
+    },
+    {
+      "id": "echo_add",
+      "type": "action",
+      "text": "Adding it to today…",
+      "action": "addTodayIntention",
       "next": "offer"
     },
     {
