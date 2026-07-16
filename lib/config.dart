@@ -18,6 +18,7 @@ import 'data/repositories/journal_repo.dart';
 import 'data/repositories/mood_repo.dart';
 import 'data/repositories/recovery_goal_repo.dart';
 import 'data/repositories/session_note_repo.dart';
+import 'data/repositories/coping_plan_repo.dart';
 import 'data/repositories/sleep_repo.dart';
 import 'data/repositories/tracker_event_repo.dart';
 import 'helper/navigation_class.dart';
@@ -67,6 +68,7 @@ late MoodRepo moodRepo;
 late CbtRepo cbtRepo;
 late SleepRepo sleepRepo;
 late SessionNoteRepo sessionNoteRepo;
+late CopingPlanRepo copingPlanRepo;
 
 /// The single ad gateway. Constructed eagerly (cheap); `init()` runs in
 /// [AppInit]. Every ad decision routes through its tested [AdPolicy].
