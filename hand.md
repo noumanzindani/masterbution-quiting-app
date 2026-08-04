@@ -10,7 +10,8 @@ travel with a `git clone`. This file replaces that.
   7.1 encrypted backup export/import (AES-256-GCM), 7.2–7.4 progress sharing + accountability partner
   (prefilled SMS/WhatsApp) + professional-support/therapy notes, 7.5 full **ar/fr/es** localization (UI + RTL
   + locale-aware bundled content), 7.6 **discreet app icon/name** (iOS alternate icon + Android activity-alias).
-  `flutter analyze` clean, **161 unit tests green**, both the **iOS sim build and the Android debug APK build**.
+  `flutter analyze` clean, **214 unit tests green**, both the **iOS sim build and the Android debug APK build**.
+  Since then: the 5-tab navigation shell and the **standing coping plan** (§7.I).
 - **What's next:** no new planned phases — remaining work is **release hardening** (§12 checklist): real AdMob
   IDs + UMP/ATT consent wiring, data-safety declarations, store audit, and **on-device QA** of the two
   device-only behaviours (notification delivery; the live discreet icon/name swap). Deferred-to-v2 items
@@ -25,7 +26,7 @@ travel with a `git clone`. This file replaces that.
 
 ## 0. TL;DR — resume in 3 steps
 
-1. `flutter pub get && flutter analyze && flutter test` → expect clean + 161 passing. (If `.g.dart`
+1. `flutter pub get && flutter analyze && flutter test` → expect clean + 214 passing. (If `.g.dart`
    errors appear, run `dart run build_runner build`.)
 2. Read §7 (feature map) to see what exists, and §8 (Phase 4–7 status) for context.
 3. Phases 0–7 are complete. There is no next phase — work from the **release-hardening checklist (§12)** and
@@ -57,7 +58,7 @@ dart run build_runner build     # Isar codegen. *.g.dart ARE committed, so only 
                                 # you add/change a @collection. (NOT `--delete-conflicting-outputs`.)
 flutter run                     # runs on a connected device / booted simulator
 flutter analyze                 # must be clean before calling any task done
-flutter test                    # 161 unit tests, must be green
+flutter test                    # 214 unit tests, must be green
 ```
 
 **Verification philosophy (do not skip):** pure domain logic is TDD'd (red→green). But native
@@ -126,6 +127,7 @@ the app's real logic runs in milliseconds on CI without a simulator. **Reuse the
 | `AnalyticsEngine` | Hour/weekday histograms, 7×24 heatmap, top triggers, least-squares trend, **min-sample-gated insights** | `analytics_engine_test` |
 | `HabitStats` | Current habit streak from done-days | `habit_stats_test` |
 | `AlternativesEngine` | "I have N minutes" → time-fit + greedy category-variety suggestions | `alternatives_engine_test` |
+| `CopingPlanEngine` | Standing-plan decisions: `revise` (create/supersede/reaffirm, keyed by `TriggerType`), `matchFor` (which plan to surface for a logged urge, in `quickTriggers` order), `cardFor` (= `matchFor`, except **never right after a lapse** — showing the plan there would read as a rebuke) | `coping_plan_engine_test` |
 | `QuizEngine` | Quiz scoring, 70% pass bar | `quiz_engine_test` |
 | `ProgramProgress` | Sequential day-unlock for multi-day programs | `program_progress_test` |
 | `AdPolicy` | The ONLY thing that decides whether an ad may show (see §6/§10) | `ad_policy_test` |
@@ -138,11 +140,13 @@ the app's real logic runs in milliseconds on CI without a simulator. **Reuse the
 
 ## 5. Data layer & the on-disk contract
 
-**9 Isar collections** (registered in `isar_service.dart`): `TrackerEvent` (the analytics workhorse — every
+**11 Isar collections** (registered in `isar_service.dart`): `TrackerEvent` (the analytics workhorse — every
 urge/lapse/win/check-in; denormalized indexed `hourOfDay`/`weekday`/`dateEpochDay` for cheap GROUP-BY),
 `RecoveryGoal` (+ embedded `Milestone`), `AssessmentResult`, `JournalEntry`, `HabitDefinition`, `HabitTick`,
 `MoodEntry` (has reserved nullable `voicePath`/`photoPath`), `CbtEntry` (answers as JSON keyed by step id),
-`SleepEntry` (bedtime/wake as minute-of-day, quality, note; `@ignore` `durationMinutes` getter).
+`SleepEntry` (bedtime/wake as minute-of-day, quality, note; `@ignore` `durationMinutes` getter),
+`SessionNote` (professional/therapy notes — Phase 7.3), `CopingPlan` (standing plan per `TriggerType`;
+`supersededAtUtc == null` means active — see §7.I).
 
 ⚠️ **`lib/data/enums.dart` is an on-disk contract.** Isar persists `@enumerated` fields **by index**, so
 reordering an existing enum silently corrupts stored data. **Only ever append** new enum values.
@@ -174,7 +178,7 @@ reordering an existing enum silently corrupts stored data. **Only ever append** 
 
 ---
 
-## 7. Feature map — what's built (Phases 0–4 core ✅)
+## 7. Feature map — what's built (Phases 0–7 ✅)
 
 ### A. Core loop (Phase 1)
 Onboarding + local-formula screening → rule-based goal (quit/reduce, 7/30/90/180). Dashboard: streak hero,
@@ -291,6 +295,34 @@ Three pieces, all with the pure logic TDD'd and the side effects kept thin:
   manifest adds `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED` + the plugin's two receivers; `build.gradle.kts`
   enables **core-library desugaring** (`desugar_jdk_libs:2.1.4`) — *required* or the Android build fails.
 
+### I. Standing coping plan (closes the Phase-4 reflection→plan gap)
+
+The relapse flow already captured an if-then implementation intention (trigger + strategy) and flattened it
+into journal prose, where it could never reach the user mid-urge. Now it writes a `CopingPlan` (**11th** Isar
+collection) keyed by `TriggerType` — the same vocabulary the urge log records, which is what makes
+trigger-time matching possible. One active plan per trigger; a later reflection picking a different strategy
+stamps `supersededAtUtc` on the old row rather than deleting it, so "breathing didn't hold for stress;
+reaching out did" stays legible. Superseding + inserting happen in **one `writeTxn`** — a crash between them
+would leave the trigger with no active plan at all.
+
+`TriggerType` gained `tiredness` (**appended** — never reorder, see §5) and the flow JSON now emits enum
+names, so `ReflectionComposer` (6 tests) renders `triggerLabel()` to keep journals readable. Two new coach
+action tokens: `adjustPlan` (engine → repo, and the coach *says* what changed) and `addTodayIntention` (an
+opt-in "Practice: …" row via the extracted `DailyPlanStore`, 8 tests).
+
+Four surfaces, deliberately unequal in how hard they push:
+
+| Surface | Behaviour |
+|---|---|
+| Urge log | the matched card via `cardFor` — **suppressed after a lapse** |
+| Plan screen | route `copingPlan`, **NO-AD**; edit / delete / per-trigger history (`CopingPlanBody`, 4 tests) |
+| Panic hub | `PanicPlanCard` — one more option in a menu, hidden entirely at zero plans |
+| Emergency mode | a **single statement** in the `reflect` step — never a menu; the forced stepper stays forced |
+
+`showLogUrgeSheet` widened to `Future<UrgeLogResult?>` to carry the trigger through. `copingPlan` is on
+`AdPolicy.noAdRoutes` **because the panic hub links straight into it** — that membership is now pinned by a
+test, since iterating the denylist proves the listed routes block ads but can't notice one going missing.
+
 ---
 
 ## 8. Phase 4–7 — status & what remains
@@ -302,8 +334,7 @@ daily reflection, the daily planner, and the `CoachHubScreen`. To add a flow: dr
 `assets/content/coach/flows/<name>.json`, add `<name>` to `ContentService._coachFlowFiles`, open it via
 `Navigator.pushNamed(context, routeName.coach, arguments: '<flow-id>')` (new route + denylist entry if it's a
 crisis flow). `action` tokens recognised: `saveReflection:relapse`, `saveReflection:daily`, `navigate:<route>`.
-*Optional polish:* an explicit relapse-analysis→plan-adjustment step (today the coping plan is captured as a
-journal entry); more coach flows.
+*Optional polish:* more coach flows. (The relapse-analysis → plan-adjustment step is **done** — see §7.I.)
 
 ### Phase 5 (gamification + wellbeing + sleep) — COMPLETE
 

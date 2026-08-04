@@ -21,7 +21,7 @@ local, monetized only via AdMob (never in crisis/urge zones), content bundled as
 ```bash
 flutter pub get
 flutter run
-flutter test                          # 33 test files under test/
+flutter test                          # 39 test files under test/
 flutter test test/streak_service_test.dart   # single file
 flutter analyze                       # flutter_lints
 dart run build_runner build --delete-conflicting-outputs   # after editing any Isar collection
