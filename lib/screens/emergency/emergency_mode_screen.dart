@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import '../../config.dart';
+import '../../data/collections/coping_plan.dart';
 import '../../data/enums.dart';
+import '../../data/trigger_labels.dart';
 import '../../services/emergency_flow.dart';
 import '../../widgets/primary_button.dart';
 
@@ -22,8 +24,22 @@ class _EmergencyModeScreenState extends State<EmergencyModeScreen> {
   final _pageController = PageController();
   final _reflect = TextEditingController();
   int _index = 0;
+  CopingPlan? _plan;
+  bool _planLoaded = false;
 
   static const _steps = EmergencyFlow.steps;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_planLoaded) return;
+    _planLoaded = true;
+    final trigger = ModalRoute.of(context)?.settings.arguments as TriggerType?;
+    if (trigger == null) return;
+    copingPlanRepo.activeFor(trigger).then((plan) {
+      if (mounted) setState(() => _plan = plan);
+    });
+  }
 
   @override
   void dispose() {
@@ -87,7 +103,12 @@ class _EmergencyModeScreenState extends State<EmergencyModeScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     for (final step in _steps)
-                      _StepView(step: step, reflect: _reflect, theme: theme),
+                      _StepView(
+                        step: step,
+                        reflect: _reflect,
+                        plan: _plan,
+                        theme: theme,
+                      ),
                   ],
                 ),
               ),
@@ -130,10 +151,15 @@ class _ProgressDots extends StatelessWidget {
 
 /// Dispatches a step enum to its inline content.
 class _StepView extends StatelessWidget {
-  const _StepView(
-      {required this.step, required this.reflect, required this.theme});
+  const _StepView({
+    required this.step,
+    required this.reflect,
+    required this.plan,
+    required this.theme,
+  });
   final EmergencyStep step;
   final TextEditingController reflect;
+  final CopingPlan? plan;
   final AppTheme theme;
 
   @override
@@ -142,7 +168,8 @@ class _StepView extends StatelessWidget {
       EmergencyStep.breathe => _BreatheStep(theme: theme),
       EmergencyStep.ground => _GroundStep(theme: theme),
       EmergencyStep.surf => _SurfStep(theme: theme),
-      EmergencyStep.reflect => _ReflectStep(controller: reflect, theme: theme),
+      EmergencyStep.reflect =>
+        _ReflectStep(controller: reflect, plan: plan, theme: theme),
       EmergencyStep.close => _CloseStep(theme: theme),
     };
   }
@@ -369,17 +396,30 @@ class _SurfStepState extends State<_SurfStep> {
 /// Step 4 — a couple of lines to get the moment out of the head and onto the
 /// page. Optional; saved as an emergency journal entry on finish.
 class _ReflectStep extends StatelessWidget {
-  const _ReflectStep({required this.controller, required this.theme});
+  const _ReflectStep({
+    required this.controller,
+    required this.plan,
+    required this.theme,
+  });
   final TextEditingController controller;
+
+  /// The standing plan for the trigger that got them here, if any. Rendered as
+  /// a *statement* — emergency mode is a forced no-choice sequence, so this
+  /// reminds without asking anything.
+  final CopingPlan? plan;
   final AppTheme theme;
 
   @override
   Widget build(BuildContext context) {
+    final p = plan;
     return _StepFrame(
       icon: Icons.edit_note_rounded,
       title: 'What\'s going on for you?',
-      body: 'Optional — just a line or two. What set this off, what you need '
-          'right now.',
+      body: p == null
+          ? 'Optional — just a line or two. What set this off, what you need '
+              'right now.'
+          : 'Last time ${triggerLabel(p.trigger).toLowerCase()} hit, you '
+              'planned to ${p.strategy.toLowerCase()}.',
       theme: theme,
       child: TextField(
         controller: controller,

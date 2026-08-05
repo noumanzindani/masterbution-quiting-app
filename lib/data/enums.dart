@@ -32,6 +32,7 @@ enum TriggerType {
   rejection,
   alcohol,
   socialMedia,
+  tiredness,
 }
 
 /// The recovery goal the user picks at onboarding.

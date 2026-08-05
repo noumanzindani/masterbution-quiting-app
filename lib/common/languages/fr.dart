@@ -43,4 +43,10 @@ const Map<String, String> fr = {
   'appLock': 'Verrouillage de l\'app',
   'privacy': 'Confidentialité',
   'theme': 'Thème',
+
+  'tabHome': 'Accueil',
+  'tabInsights': 'Aperçus',
+  'tabTools': 'Outils',
+  'tabLearn': 'Apprendre',
+  'tabYou': 'Vous',
 };

@@ -15,7 +15,6 @@ import '../screens/emergency/emergency_mode_screen.dart';
 import '../screens/emergency/panic_screen.dart';
 import '../screens/emergency/urge_surf_screen.dart';
 import '../screens/habits/habits_screen.dart';
-import '../screens/home/home_screen.dart';
 import '../screens/insights/insights_screen.dart';
 import '../screens/learn/academy_screen.dart';
 import '../screens/learn/alternatives_screen.dart';
@@ -30,11 +29,13 @@ import '../screens/learn/values_screen.dart';
 import '../screens/lock/lock_screen.dart';
 import '../screens/mood/mood_journal_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/plan/coping_plan_screen.dart';
 import '../screens/rewards/rewards_screen.dart';
 import '../screens/settings/backup_screen.dart';
 import '../screens/social/accountability_screen.dart';
 import '../screens/social/professional_notes_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/shell/main_shell_screen.dart';
 import '../screens/sleep/sleep_log_screen.dart';
 import '../screens/wellbeing/wellbeing_hub_screen.dart';
 import '../screens/wellbeing/wellbeing_module_screen.dart';
@@ -49,7 +50,7 @@ class AppRoute {
   Map<String, WidgetBuilder> get routes => {
         _r.splash: (_) => const SplashScreen(),
         _r.onboarding: (_) => const OnboardingScreen(),
-        _r.home: (_) => const HomeScreen(),
+        _r.home: (_) => const MainShellScreen(),
         // Emergency / crisis — all NO-AD zones (see AdPolicy.noAdRoutes).
         _r.panic: (_) => const PanicScreen(),
         _r.emergencyMode: (_) => const EmergencyModeScreen(),
@@ -84,6 +85,7 @@ class AppRoute {
         _r.coachHub: (_) => const CoachHubScreen(),
         _r.coach: (_) => const CoachFlowScreen(),
         _r.dailyPlanner: (_) => const DailyPlannerScreen(),
+        _r.copingPlan: (_) => const CopingPlanScreen(),
         _r.rewards: (_) => const RewardsScreen(),
         _r.wellbeing: (_) => const WellbeingHubScreen(),
         _r.wellbeingModule: (_) => const WellbeingModuleScreen(),

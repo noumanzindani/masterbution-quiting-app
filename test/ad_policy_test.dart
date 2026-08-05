@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:momentum/routes/route_name.dart';
 import 'package:momentum/services/ad_policy.dart';
 
 void main() {
@@ -15,6 +16,23 @@ void main() {
           isFalse,
           reason: '$route must be a no-ad zone',
         );
+      }
+    });
+
+    // Iterating noAdRoutes proves the listed routes block ads — it cannot
+    // notice a route dropping off the list. These are the surfaces reachable
+    // from inside a crisis (the panic hub links straight to the coping plans),
+    // so pin their membership explicitly.
+    test('every crisis-reachable route is on the denylist', () {
+      final r = RouteName();
+      for (final route in [
+        r.panic,
+        r.emergencyMode,
+        r.crisisResources,
+        r.copingPlan,
+        r.relapseReflection,
+      ]) {
+        expect(AdPolicy.noAdRoutes, contains(route));
       }
     });
 

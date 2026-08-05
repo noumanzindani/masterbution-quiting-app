@@ -5,12 +5,35 @@ import '../../data/trigger_labels.dart';
 import '../../providers/analytics_provider.dart';
 import '../../services/analytics_engine.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
+import '../../widgets/nav_row.dart';
 
 /// "Make the data meaningful" — descriptive patterns from the event log:
 /// gated insight cards, a when-urges-hit heatmap, common triggers, and a weekly
 /// trend. Non-crisis screen, so a banner is allowed (still policy-gated).
+///
+/// Thin wrapper around [InsightsBody] so the route still works if pushed
+/// directly; [MainShellScreen] embeds [InsightsBody] as the Insights tab.
 class InsightsScreen extends StatelessWidget {
   const InsightsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = appColor(context);
+    return Scaffold(
+      backgroundColor: theme.scaffoldBg,
+      appBar: AppBar(
+        title: Text('Insights',
+            style: appCss.headingBold22.textColor(theme.darkText)),
+      ),
+      body: const InsightsBody(),
+    );
+  }
+}
+
+/// The Insights tab's content — patterns/analytics plus quick links to the
+/// two other "track yourself" screens (Habits, Mood journal).
+class InsightsBody extends StatelessWidget {
+  const InsightsBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,51 +52,62 @@ class _InsightsView extends StatelessWidget {
     final theme = appColor(context);
     final p = context.watch<AnalyticsProvider>();
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBg,
-      appBar: AppBar(
-        title: Text('Insights',
-            style: appCss.headingBold22.textColor(theme.darkText)),
-      ),
-      body: p.loading
-          ? const Center(child: CircularProgressIndicator())
-          : !p.hasEnoughData
-              ? _EmptyState(theme: theme)
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                  children: [
-                    if (p.insights.isNotEmpty) ...[
-                      for (final i in p.insights)
-                        _InsightCard(text: i.text, theme: theme),
-                      const SizedBox(height: 12),
-                    ],
-                    _Section(
-                      title: 'When urges tend to hit',
-                      subtitle: 'Darker = more slips logged at that time.',
-                      theme: theme,
-                      child: _Heatmap(grid: p.lapseHeatmap, theme: theme),
-                    ),
-                    if (p.topTriggers.isNotEmpty)
-                      _Section(
-                        title: 'Most common triggers',
-                        theme: theme,
-                        child: _TriggerBars(data: p.topTriggers, theme: theme),
-                      ),
-                    _Section(
-                      title: 'Slips per week',
-                      subtitle: p.weeklyTrend.slope < -0.05
-                          ? 'Trending down — the direction that matters. (estimate)'
-                          : p.weeklyTrend.slope > 0.05
-                              ? 'Ticking up lately — worth a gentle check-in. (estimate)'
-                              : 'Holding steady. (estimate)',
-                      theme: theme,
-                      child: _WeeklyTrend(weekly: p.weeklyLapses, theme: theme),
-                    ),
-                    const SizedBox(height: 12),
-                    const Center(child: BannerAdWidget()),
-                  ],
+    return p.loading
+        ? const Center(child: CircularProgressIndicator())
+        : ListView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            children: [
+              NavRow(
+                icon: Icons.task_alt_rounded,
+                title: 'Habits',
+                subtitle: 'Build wins alongside recovery',
+                route: routeName.habits,
+                theme: theme,
+              ),
+              const SizedBox(height: 10),
+              NavRow(
+                icon: Icons.mood_rounded,
+                title: 'Mood journal',
+                subtitle: 'Notice and name how you feel',
+                route: routeName.moodJournal,
+                theme: theme,
+              ),
+              const SizedBox(height: 16),
+              if (!p.hasEnoughData)
+                _EmptyState(theme: theme)
+              else ...[
+                if (p.insights.isNotEmpty) ...[
+                  for (final i in p.insights)
+                    _InsightCard(text: i.text, theme: theme),
+                  const SizedBox(height: 12),
+                ],
+                _Section(
+                  title: 'When urges tend to hit',
+                  subtitle: 'Darker = more slips logged at that time.',
+                  theme: theme,
+                  child: _Heatmap(grid: p.lapseHeatmap, theme: theme),
                 ),
-    );
+                if (p.topTriggers.isNotEmpty)
+                  _Section(
+                    title: 'Most common triggers',
+                    theme: theme,
+                    child: _TriggerBars(data: p.topTriggers, theme: theme),
+                  ),
+                _Section(
+                  title: 'Slips per week',
+                  subtitle: p.weeklyTrend.slope < -0.05
+                      ? 'Trending down — the direction that matters. (estimate)'
+                      : p.weeklyTrend.slope > 0.05
+                          ? 'Ticking up lately — worth a gentle check-in. (estimate)'
+                          : 'Holding steady. (estimate)',
+                  theme: theme,
+                  child: _WeeklyTrend(weekly: p.weeklyLapses, theme: theme),
+                ),
+              ],
+              const SizedBox(height: 12),
+              const Center(child: BannerAdWidget()),
+            ],
+          );
   }
 }
 

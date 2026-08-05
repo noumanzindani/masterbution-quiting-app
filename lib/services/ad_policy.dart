@@ -24,6 +24,7 @@ class AdPolicy {
       r.emergencyMode,
       r.crisisResources,
       r.relapseReflection,
+      r.copingPlan,
       r.lock,
     };
   }();

@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'collections/assessment_result.dart';
 import 'collections/cbt_entry.dart';
+import 'collections/coping_plan.dart';
 import 'collections/habit_definition.dart';
 import 'collections/habit_tick.dart';
 import 'collections/journal_entry.dart';
@@ -39,6 +40,7 @@ class IsarService {
         CbtEntrySchema,
         SleepEntrySchema,
         SessionNoteSchema,
+        CopingPlanSchema,
       ],
       directory: dir.path,
       // A stable name keeps the DB file predictable for export/import later.

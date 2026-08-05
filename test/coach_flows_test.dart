@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:momentum/content/coach_models.dart';
 import 'package:momentum/services/coach_runner.dart';
+import 'package:momentum/services/coping_plan_engine.dart';
 
 /// Validates the *authored* coach flow JSON against the *real* engine. A coach
 /// flow is a hand-written decision graph, so the classic bug is a dangling node
@@ -48,7 +49,10 @@ void _validate(CoachFlow flow) {
     // Action tokens are recognised and (for navigation) target a real tool.
     if (n.type == 'action') {
       final a = n.action ?? '';
-      final known = a.startsWith('saveReflection') || a.startsWith('navigate:');
+      final known = a.startsWith('saveReflection') ||
+          a.startsWith('navigate:') ||
+          a == 'adjustPlan' ||
+          a == 'addTodayIntention';
       expect(known, isTrue, reason: '${n.id} has unknown action "$a"');
       if (a.startsWith('navigate:')) {
         expect(_validNavTargets.contains(a.substring('navigate:'.length)),
@@ -143,7 +147,27 @@ void main() {
     expect(CoachRunner.current(flow, s).type, 'input');
     s = CoachRunner.submit(flow, s, 'a break');
     expect(s.vars['feeling'], 'Guilty or ashamed');
-    expect(s.vars['trigger'], 'Boredom');
+    expect(s.vars['trigger'], 'boredom');
     expect(s.vars['need'], 'a break');
+  });
+
+  test('every trigger effect names a real TriggerType', () {
+    // A flow emitting "stres" would parse to nothing, silently create no plan,
+    // and the user would never learn their reflection went nowhere — the same
+    // silent-failure class achievements_content_test closes.
+    flows.forEach((name, flow) {
+      for (final node in flow.nodes) {
+        for (final choice in node.choices) {
+          final raw = choice.effect['trigger'];
+          if (raw == null) continue;
+          expect(
+            CopingPlanEngine.parseTrigger(raw),
+            isNotNull,
+            reason: '$name: node "${node.id}" choice "${choice.label}" emits '
+                'trigger "$raw", which is not a TriggerType',
+          );
+        }
+      }
+    });
   });
 }

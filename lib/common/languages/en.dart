@@ -43,4 +43,10 @@ const Map<String, String> en = {
   'appLock': 'App lock',
   'privacy': 'Privacy',
   'theme': 'Theme',
+
+  'tabHome': 'Home',
+  'tabInsights': 'Insights',
+  'tabTools': 'Tools',
+  'tabLearn': 'Learn',
+  'tabYou': 'You',
 };

@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import '../../config.dart';
-import '../../data/time_buckets.dart';
+import '../../services/daily_plan_store.dart';
 import '../../widgets/ad/banner_ad_widget.dart';
 
 /// A light daily planner: a handful of intentions for *today*. This is a single
@@ -14,18 +12,8 @@ class DailyPlannerScreen extends StatefulWidget {
   State<DailyPlannerScreen> createState() => _DailyPlannerScreenState();
 }
 
-class _PlanItem {
-  _PlanItem(this.text, this.done);
-  final String text;
-  bool done;
-
-  Map<String, dynamic> toJson() => {'t': text, 'd': done};
-  factory _PlanItem.fromJson(Map<String, dynamic> j) =>
-      _PlanItem(j['t'] as String? ?? '', j['d'] as bool? ?? false);
-}
-
 class _DailyPlannerScreenState extends State<DailyPlannerScreen> {
-  final List<_PlanItem> _items = [];
+  final List<DailyPlanItem> _items = [];
   final _controller = TextEditingController();
 
   static const _suggestions = [
@@ -50,34 +38,17 @@ class _DailyPlannerScreenState extends State<DailyPlannerScreen> {
   }
 
   void _load() {
-    final raw = prefs.getString(session.dailyPlan);
-    if (raw == null) return;
-    try {
-      final data = jsonDecode(raw) as Map<String, dynamic>;
-      // A plan from a previous day starts fresh — today is a clean slate.
-      if ((data['day'] as num?)?.toInt() != TimeBuckets.todayEpochDay()) return;
-      final items = (data['items'] as List?) ?? const [];
-      _items.addAll(
-        items.map((e) => _PlanItem.fromJson(e as Map<String, dynamic>)),
-      );
-      setState(() {});
-    } catch (_) {
-      // Corrupt blob → start empty rather than crash.
-    }
+    final items = DailyPlanStore.load();
+    if (items.isEmpty) return;
+    setState(() => _items.addAll(items));
   }
 
-  Future<void> _save() async {
-    final data = {
-      'day': TimeBuckets.todayEpochDay(),
-      'items': _items.map((e) => e.toJson()).toList(),
-    };
-    await prefs.setString(session.dailyPlan, jsonEncode(data));
-  }
+  Future<void> _save() => DailyPlanStore.save(_items);
 
   void _add(String text) {
     final t = text.trim();
     if (t.isEmpty) return;
-    setState(() => _items.add(_PlanItem(t, false)));
+    setState(() => _items.add(DailyPlanItem(t, false)));
     _controller.clear();
     _save();
   }
@@ -148,7 +119,7 @@ class _PlanRow extends StatelessWidget {
     required this.onToggle,
     required this.onRemove,
   });
-  final _PlanItem item;
+  final DailyPlanItem item;
   final AppTheme theme;
   final VoidCallback onToggle;
   final VoidCallback onRemove;

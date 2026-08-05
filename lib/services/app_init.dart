@@ -7,6 +7,7 @@ import '../data/repositories/journal_repo.dart';
 import '../data/repositories/mood_repo.dart';
 import '../data/repositories/recovery_goal_repo.dart';
 import '../data/repositories/session_note_repo.dart';
+import '../data/repositories/coping_plan_repo.dart';
 import '../data/repositories/sleep_repo.dart';
 import '../data/repositories/tracker_event_repo.dart';
 import 'notification_scheduling.dart';
@@ -33,6 +34,7 @@ class AppInit {
     cbtRepo = CbtRepo(isar);
     sleepRepo = SleepRepo(isar);
     sessionNoteRepo = SessionNoteRepo(isar);
+    copingPlanRepo = CopingPlanRepo(isar);
 
     // Initialize the ads SDK (test IDs). Non-fatal if it fails — the app must
     // run fine without ads, and the AdPolicy gate keeps ads off until ready.

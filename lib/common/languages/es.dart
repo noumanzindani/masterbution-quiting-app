@@ -43,4 +43,10 @@ const Map<String, String> es = {
   'appLock': 'Bloqueo de la app',
   'privacy': 'Privacidad',
   'theme': 'Tema',
+
+  'tabHome': 'Inicio',
+  'tabInsights': 'Estadísticas',
+  'tabTools': 'Herramientas',
+  'tabLearn': 'Aprender',
+  'tabYou': 'Tú',
 };

@@ -46,6 +46,7 @@ class RouteName {
   final String coachHub = 'coachHub';
   final String coach = 'coach'; // generic CoachFlowScreen (non-crisis flows)
   final String dailyPlanner = 'dailyPlanner';
+  final String copingPlan = 'copingPlan';
 
   // Rewards / gamification
   final String rewards = 'rewards';

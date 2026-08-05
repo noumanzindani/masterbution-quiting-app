@@ -5,8 +5,23 @@ import 'emergency_scaffold.dart';
 /// The Panic hub — the calm landing reached from the dashboard's always-visible
 /// "I need help right now" bar. Offers the in-the-moment tools; each is its own
 /// NO-AD route pushed on top of this one.
-class PanicScreen extends StatelessWidget {
+class PanicScreen extends StatefulWidget {
   const PanicScreen({super.key});
+
+  @override
+  State<PanicScreen> createState() => _PanicScreenState();
+}
+
+class _PanicScreenState extends State<PanicScreen> {
+  int _planCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    copingPlanRepo.active().then((plans) {
+      if (mounted) setState(() => _planCount = plans.length);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +49,7 @@ class PanicScreen extends StatelessWidget {
             onTap: () => route.pushNamed(context, routeName.emergencyMode),
           ),
           const SizedBox(height: 20),
+          if (_planCount > 0) PanicPlanCard(count: _planCount, theme: theme),
           _ToolCard(
             icon: Icons.air_rounded,
             title: 'Breathe with me',
@@ -120,6 +136,32 @@ class _EscalateCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// A quiet pointer to the plans you already made for moments like this. The hub
+/// is a menu by design, so this wears the same chrome as every other option —
+/// one more thing you may pick, never a demand.
+///
+/// Public and count-driven so the pluralised copy and the destination stay under
+/// test; the screen owns the [copingPlanRepo] read.
+class PanicPlanCard extends StatelessWidget {
+  const PanicPlanCard({super.key, required this.count, required this.theme});
+
+  final int count;
+  final AppTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ToolCard(
+      icon: Icons.shield_moon_rounded,
+      title: 'Your coping plans',
+      subtitle: count == 1
+          ? 'One thing you decided to try'
+          : '$count things you decided to try',
+      theme: theme,
+      onTap: () => route.pushNamed(context, routeName.copingPlan),
     );
   }
 }
